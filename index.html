@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Block Smasher!</title>
+    <style>
+      #begin {
+        width:100vw;
+        height:100vh;
+        background-color:black;
+        position:absolute;
+        top:50%;
+        left:50%;
+        transform:translate(-50%, -50%);
+        margin:0;
+        font-size:1vw;
+        z-index:1;
+      }
+      #usernameInput{
+        position:absolute;
+        top:50%;
+        left:50%;
+        transform:translate(-50%, -50%);
+        margin:0;
+        width:20em;
+        height:4em;
+        text-align:center;
+        font-size:2.5em;
+      }
+      #usernameInput:focus{
+        outline:none;
+      }
+      .player{
+        width:50px;
+        height:50px;
+        background-color:black;
+        text-align:center;
+        font-weight:bold;
+        position:absolute;
+        color:white;
+      }
+    </style>
+  </head>
+  <body>
+    <div id = "begin">
+      <input id = "usernameInput" placeholder="Enter Your Username" maxLength="5">
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+var started = false;
+var socket = io();
+var players = new Object({});
+var username;
+// var playerObject;
+
+window.addEventListener('keydown', function(event) {
+  if(event.key == "Enter" && !started){
+    started=true;
+    username = document.getElementById('usernameInput').value;
+    document.body.removeChild(document.getElementById('begin'));
+    socket.emit('spawn player', username);
+    // playerObject = document.getElementById(username);
+  }
+  if(started){
+    if(event.key == "d"){
+      players[username]["position"]["x"] += 1;
+      socket.emit('move', username, players[username]["position"]["x"], players[username]["position"]["y"]);
+    } else if(event.key == "a"){
+      players[username]["position"]["x"] -= 1;
+      socket.emit('move', username, players[username]["position"]["x"], players[username]["position"]["y"]);
+    }
+    if(event.key == "s"){
+      players[username]["position"]["y"] += 1;
+      socket.emit('move', username, players[username]["position"]["x"], players[username]["position"]["y"]);
+    } else if(event.key == "w"){
+      players[username]["position"]["y"] -= 1;
+      socket.emit('move', username, players[username]["position"]["x"], players[username]["position"]["y"]);
+    }
+  }
+});
+  
+function position(user) {
+  return "top: "+players[user]["position"]["y"]+"%; left:" + players[user]["position"]["x"]+"%;"
+}
+socket.on('move', function(user, valueX, valueY){
+  if (players[user] == undefined){
+    spawnPlayerManual(user);
+  }
+  players[user]["position"]["x"] = valueX;
+  players[user]["position"]["y"] = valueY;
+    var playerObject  = document.getElementById(user);
+    playerObject.setAttribute("style", position(user));
+  
+});
+socket.on('update', function(variable, amount){
+  
+  
+});
+socket.on('spawn player', function(user) {
+    players[user] = {
+      "position":{
+        "x": 0,
+        "y": 0,
+      },
+    }
+    
+    var player = document.createElement("div");
+    player.setAttribute("style", position(user));
+    player.innerHTML = user;
+    player.classList.add('player');
+    player.setAttribute("id", user);
+    document.body.appendChild(player);
+});
+function spawnPlayerManual(user) {
+  players[user] = {
+      "position":{
+        "x": 0,
+        "y": 0,
+      },
+    }
+    
+    var player = document.createElement("div");
+    player.setAttribute("style", position(user));
+    player.innerHTML = user;
+    player.classList.add('player');
+    player.setAttribute("id", user);
+    document.body.appendChild(player);
+}
+  // socket.emit('typing signal', username + " is typing..");
+  
+//   var messages = document.getElementById('messages');
+//   var form = document.getElementById('form');
+//   var input = document.getElementById('input');
+//   var typing = document.getElementById('isTyping');
+//   form.addEventListener('keydown', function(e) {
+//     socket.emit('typing signal', username + " is typing..");
+//   });
+//   form.addEventListener('submit', function(e) {
+//     e.preventDefault();
+//     if (input.value) {
+//       socket.emit('chat message', username + ": " +input.value);
+//       input.value = '';
+//       typing.innerHTML = "";
+//     }
+//   });
+
+//   socket.on('chat message', function(msg) {
+//     var item = document.createElement('li');
+//     item.textContent = msg;
+//     messages.appendChild(item);
+//     window.scrollTo(0, document.body.scrollHeight);
+//     typing.textContent = "";
+//     messages.appendChild(typing);
+//     window.scrollTo(0, document.body.scrollHeight);
+//   });
+  </script>
+  </body>
+</html>
