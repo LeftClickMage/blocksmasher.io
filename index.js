@@ -11,6 +11,9 @@ app.get('/', (req, res) => {
 
 io.on('connection', (socket) => {
   console.log('a user connected');
+  socket.on('disconnect', () => {
+    console.log("disconnected");
+  });
 });
 
 server.listen(3000, () => {
@@ -33,4 +36,3 @@ io.on('connection', (socket) => {
     io.emit('update', msg);
   });
 });
-
