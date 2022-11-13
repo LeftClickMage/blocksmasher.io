@@ -3,7 +3,26 @@
   <head>
     <title>Block Smasher!</title>
     <style>
-   
+    
+
+@font-face {
+  font-family: 'Ubuntu';
+  font-style: normal;
+  font-weight: 500;
+  src: url('/ubuntu-v20-latin-500.eot'); /* IE9 Compat Modes */
+  src: local(''),
+       url('/ubuntu-v20-latin-500.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('/ubuntu-v20-latin-500.woff2') format('woff2'), /* Super Modern Browsers */
+       url('/ubuntu-v20-latin-500.woff') format('woff'), /* Modern Browsers */
+       url('/ubuntu-v20-latin-500.ttf') format('truetype'), /* Safari, Android, iOS */
+       url('/ubuntu-v20-latin-500.svg#Ubuntu') format('svg'); /* Legacy iOS */
+}
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@500&display=swap');
+      html, body {
+        width:  100%;
+        height: 100%;
+        margin: 0;
+      }
       #begin {
         width:100vw;
         height:100vh;
@@ -42,14 +61,36 @@
       #canvas {
         position:absolute;
       }
+
+      #chat{
+        position:absolute;
+        left:0;
+        bottom:0;
+        margin:0;
+        font-size:3rem;
+        
+      }
+      #canvas {
+        width:100vw;
+        height:100vh;
+      }
+      #zoomOutButton {
+        position:absolute;
+        top:0;
+        left:0;
+        font-size:2em;
+      }
     </style>
   </head>
   <body>
     
     <div id = "begin">
-      <input id = "usernameInput" placeholder="Enter Your Username" maxLength="5">
+      <input id = "usernameInput" placeholder="Enter Your Username" maxLength="13">
     </div>
+    
     <canvas id ="canvas"></canvas>
+ 
+    <input id="chat" placeholder="Press '/' to chat!" maxLength = "30">
     <script src="/socket.io/socket.io.js"></script>
     <script>
       var spawned = false;
@@ -58,16 +99,67 @@
       var players = new Object({});
       var username;
       var canvas = document.getElementById('canvas');
-      canvas.width = innerWidth;
-      canvas.height = innerHeight;
-      var canvas = document.getElementById('canvas');
+      var chatInput = document.getElementById('chat');
+      window.addEventListener('keydown', event =>{
+        if(event.key == "Enter" && !started){
+          started=true;
+          username = document.getElementById('usernameInput').value;
+          document.body.removeChild(document.getElementById('begin'));
+          socket.emit('spawn player', username);
+          animate();
+          
+        }
+        if (event.key == "/"){
+          chatInput.focus();
+          
+        }
+        if (event.key == "Enter" && document.activeElement == chatInput && chatInput.value !== ""){
+          socket.emit('update', username, chatInput.value);
+          chatInput.value = "";
+          chatInput.blur();
+          canvas.focus();
+        }
+        if(chatInput !== document.activeElement){
+          if (event.key == "d"){
+            movement.right = true;
+        } else if (event.key == "a"){
+            movement.left = true;
+        }
+        if (event.key == "w"){
+            movement.up = true;
+        } else if (event.key == "s"){
+            movement.down = true;
+        }
+        if(event.key == " "){
+          movement.atk = true;
+        }
+        }
+        
+    })
+    //.focus()
+    window.addEventListener('keyup', event=>{
+        if (event.key == "d"){
+            movement.right = false;
+        } else if (event.key == "a"){
+            movement.left = false;
+        }
+        if (event.key == "w"){
+            movement.up = false;
+        } else if (event.key == "s"){
+            movement.down = false;
+        }
+        if (event.key == " "){
+          movement.atk = false;
+        }
+
+    })
       var ctx = canvas.getContext("2d");
       var gravity = 1;
       var usernameList = [];
       var prevX;
       var prevY;
       class Player{
-        constructor({x,y,color}){
+        constructor({x,y,color, username}){
           this.position = {
             x:x,
             y:y,
@@ -85,10 +177,87 @@
           this.disconnectTimer = 0;
           this.prevX = 0;
           this.prevY = 0;
+          this.prevR = 0;
+          this.username = username;
+          this.message = "";
+          this.messageTimer = 0;
+          this.afkSymbol = "";
+          this.afkColor = "black";
+          this.rotation = 0;
+          this.attacking = false;
         }
         create(){
+          var offset = 0;
+          if (this.attacking) {
+            offset = 50;
+          }
+          var posX = this.width/-2;
+          var posY = this.height/-2;
+          
+          ctx.save();
+          ctx.translate(this.position.x+this.width/2, this.position.y+this.height/2);
+          ctx.rotate(this.rotation * Math.PI/180);
+          //fillText([text], [x], [y]); [confirmed]
           ctx.fillStyle = this.color;
-          ctx.fillRect(this.position.x,this.position.y,this.width,this.height);
+          ctx.fillRect(posX,posY,this.width,this.height);
+          ctx.fillStyle = "black";
+        
+          ctx.beginPath();
+          ctx.moveTo(25+offset,25+offset);
+          ctx.lineTo(50+offset,25+offset);
+          ctx.lineTo(25+offset,50+offset);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.moveTo(-25-offset,25+offset);
+          ctx.lineTo(-50-offset,25+offset);
+          ctx.lineTo(-25-offset,50+offset);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.moveTo(25+offset,-25-offset);
+          ctx.lineTo(50+offset,-25-offset);
+          ctx.lineTo(25+offset,-50-offset);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.moveTo(-25-offset,-25-offset);
+          ctx.lineTo(-50-offset,-25-offset);
+          ctx.lineTo(-25-offset,-50-offset);
+          ctx.fill();
+          
+          
+          ctx.strokeStyle= "#ACABB3";
+          ctx.lineWidth = 5;
+          ctx.beginPath();
+          ctx.moveTo(25,25);
+          ctx.lineTo(25+offset,25+offset);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(-25,25);
+          ctx.lineTo(-25-offset,25+offset);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(25,-25);
+          ctx.lineTo(25+offset,-25-offset);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(-25,-25);
+          ctx.lineTo(-25-offset,-25-offset);
+          ctx.stroke();
+
+
+          
+          ctx.restore();
+          
+          
+          ctx.fillStyle = this.afkColor;
+          ctx.font = "25px Ubuntu";
+          ctx.textAlign = "center";
+          ctx.fillText(this.afkSymbol + this.afkSymbol + this.username + this.afkSymbol + this.afkSymbol,this.position.x+this.width/2, this.position.y-10);
+          ctx.fillStyle = "grey";
+          ctx.font = "30px Ubuntu";
+          ctx.textAlign = "center";
+          ctx.fillText(this.message,this.position.x+this.width/2, this.position.y-45);
+          
+
         }
         test(){
           alert("Created");
@@ -101,92 +270,167 @@
         right: false,
         left: false,
         up: false,
+        down: false,
+        atk: false,
       }
-      const movementArrow = {
-        right: false,
-        left: false,
-        up: false,
+
+      var fps = 45;
+      var heightVal = 1152;
+      var widthVal = 2048;
+      var prevWidth;
+      var prevHeight;
+      function maxZoomOut(){
+        widthVal = 2048;
+        heightVal = 1152;
       }
       function animate(){
-        ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      
+    setTimeout(function() {
+      window.onresize = function(event){
+        if (innerWidth/innerHeight >= .75){
+          maxZoomOut();
+        }
+      };
+      var prop = innerHeight/innerWidth;
+      canvas.width = widthVal;
+      canvas.height = heightVal;
+      if (innerWidth*9/16 != innerHeight){
+        heightVal = widthVal*prop;
+
+      }
+      if (heightVal>1152){
+        var difference = heightVal-1152;
+        var varHeight = heightVal;
+        var varWidth = widthVal;
+        for(let i = difference; i > 0; i--){
+          varHeight -= 1*prop;
+          varWidth -= 1;
+        }
+        widthVal = varWidth;
+        heightVal = varHeight;
+      }
+
+      if (chatInput.value == "/"){
+        chatInput.value = "";
+      }
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
         requestAnimationFrame(animate);
+ 
         if (spawned){
+          var speedModifier = 1;
+          if (movement.up && movement.right){
+            speedModifier = .5;
+          } else if (movement.up && movement.left){
+            speedModifier = .5;
+          } else if (movement.down && movement.left){
+            speedModifier = .5;
+          } else if (movement.down && movement.right){
+            speedModifier = .5;
+          }
           if (movement.right && players[username].rightEdge == false){
-          players[username].velocity.x = 5;
+          players[username].velocity.x = 10 * speedModifier;
         } else if (movement.left && players[username].leftEdge == false){
-          players[username].velocity.x = -5;
+          players[username].velocity.x = -10 * speedModifier;
         } else {
-          players[username].velocity.x = 0;
+          players[username].velocity.x = 0 * speedModifier;
+        }
+        if (movement.up){
+          players[username].velocity.y = -10 * speedModifier;
+        } else if (movement.down){
+          players[username].velocity.y = 10 * speedModifier;
+        } else {
+          players[username].velocity.y = 0 * speedModifier;
+        }
+        if(movement.atk){
+          players[username].attacking = true;
+        } else {
+          players[username].attacking = false;
+        }
+        if(players[username].attacking){
+          players[username].rotation += 4;
+        } else {
+          players[username].rotation += 2.6;
         }
         
         players[username].position.x += players[username].velocity.x;
         players[username].position.y += players[username].velocity.y;
-        socket.emit('move', username, players[username].position.x,players[username].position.y);
+        players[username].create();
+        socket.emit('move', username, players[username].position.x,players[username].position.y, players[username].rotation, players[username].attacking);
+        
+        
         for(let i = 0; i<usernameList.length; i++){
+          if (usernameList[i] == username){
+            players[usernameList[i]].color = "blue";
+          } else {
+            players[usernameList[i]].color = "red";
+          }
           if (players[usernameList[i]].prevX == players[usernameList[i]].position.x && players[usernameList[i]].prevY == players[usernameList[i]].position.y){
             players[usernameList[i]].disconnectTimer +=1;
           } else {
             players[usernameList[i]].disconnectTimer = 0;
+            players[usernameList[i]].afkSymbol = "";
+              players[usernameList[i]].afkColor = "black";
+          }
+          if(players[usernameList[i]].messageTimer >= 200){
+            players[usernameList[i]].message = "";
+            players[usernameList[i]].messageTimer = 0;
+            socket.emit('update', usernameList[i], "msg<prog>msg</prog>msgpassword:password:msg")
+          } else {
+            players[usernameList[i]].messageTimer += 1;
           }
           
           
-          if (players[usernameList[i]].disconnectTimer == 3000){
-              alert("WARNING! You are going to be disconnected for being AFK.");
-          } else if (players[usernameList[i]].disconnectTimer == 3600){
+          if (players[usernameList[i]].disconnectTimer == 2200){
+              players[usernameList[i]].afkSymbol = "*";
+              players[usernameList[i]].afkColor = "red";
+              socket.emit('update', usernameList[i], "red<prog>red</prog>dcpassword:password:dc");
+          } else if (players[usernameList[i]].disconnectTimer == 2700){
+              
+              socket.emit('update', usernameList[i], "dc<prog>dc</prog>dcpassword:password:dc");
               usernameList.splice(usernameList.indexOf(usernameList[i]), 1);
-
-
+              
           }
-          players[usernameList[i]].create();
+          if (players[usernameList[i]].rotation == players[usernameList[i]].prevR){
+            if (players[usernameList[i]].attacking){
+              players[usernameList[i]].rotation +=4;
+            } else {
+              players[usernameList[i]].rotation +=2.6;
+            }
+          }
+          if(usernameList[i] != username){6
+            players[usernameList[i]].create();
+          }
           players[usernameList[i]].prevX = players[usernameList[i]].position.x;
           players[usernameList[i]].prevY = players[usernameList[i]].position.y;
+          players[usernameList[i]].prevR = players[usernameList[i]].rotation;
         }
         }
+ 
+    }, 1000 / fps);
+        
         
         }
       
-    
-    
-    window.addEventListener('keydown', event =>{
-      if(event.key == "Enter" && !started){
-    started=true;
-    username = document.getElementById('usernameInput').value;
-    document.body.removeChild(document.getElementById('begin'));
-    socket.emit('spawn player', username);
-    animate();
-    
-    }
-        if (event.key == "d"){
-            movement.right = true;
-        } else if (event.key == "a"){
-            movement.left = true;
-        } else if (event.key == "w"){
-            movement.up = true;
-        }
-        
-    })
-    window.addEventListener('keyup', event=>{
-        if (event.key == "d"){
-            movement.right = false;
-        } else if (event.key == "a"){
-            movement.left = false;
-        } else if (event.key == "w"){
-            movement.up = false;
-        }
 
-    })
+    //ctx.translate(x+width.2, y+height/2);
+    //ctx,rotate(degrees*Math.PI/180);
+    
     
 
 
 
-socket.on('move', function(user, valX, valY){
+socket.on('move', function(user, valX, valY, valR,atk){
   
   if (players[user] == undefined){
     spawnPlayerManual(user);
     
   }
-  players[user].position.x = valX;
-  players[user].position.y = valY;
+  if(user != username){
+    players[user].position.x = valX;
+    players[user].position.y = valY;
+    players[user].rotation = valR;
+    players[user].attacking = atk;
+  }
 
    // console.log(players[user]);
         
@@ -197,16 +441,35 @@ socket.on('disconnect', function(){
   socket.emit('update', username);
   
 });
-socket.on('update', function(msg){
-  console.log(msg);
+socket.on('update', function(user, msg){
+ if (msg == "dc<prog>dc</prog>dcpassword:password:dc"){
+   if(username == user){
+     window.location.replace("https://google.com");
+   }
+    usernameList.splice(usernameList.indexOf(user), 1);
+   
+   
+ } else if (msg == "msg<prog>msg</prog>msgpassword:password:msg") {
+    players[user].message = "";
+    players[user].messageTimer = 0;
+  } else if (msg == "red<prog>red</prog>dcpassword:password:dc") {
+    players[user].afkSymbol = "*";
+    players[user].afkColor = "red";
+  } else {
+   players[user].messageTimer= 0;
+   players[user].message = msg;
+ }
   
+
+
 });
 socket.on('spawn player', function(user) {
-  if (!spawned){
-    players[user] = new Player({x:100, y:400, color:"blue"});
+  console.log(spawned);
+  if (!spawned && user != ""){
+    players[user] = new Player({x:100, y:400, color:"blue", username:user});
     spawned = true;
   } else {
-    players[user] = new Player({x:100, y:400, color:"red"});
+    players[user] = new Player({x:100, y:400, color:"red", username:user});
   }
   usernameList.push(user);
 
@@ -214,11 +477,23 @@ socket.on('spawn player', function(user) {
 });
 function spawnPlayerManual(user) {
   console.log("created");
-  players[user] = new Player({x:100, y:400, color:"red"});
+  players[user] = new Player({x:100, y:400, color:"red", username:user});
   usernameList.push(user);
 }
-
+function checkOverflow(element) {
+  var curOverflow = element.style.overflow;
+  if(!curOverflow || curOverflow === "visible") {
+    element.style.overflow = "hidden";
+  }
+  var isOverflowing = element.clientWidth < element.scrollHeight*1.9969;
+  element.style.overflow = curOverflow;
+  return isOverflowing;
+}
 
   </script>
+  
+  
+  
+
   </body>
 </html>
