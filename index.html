@@ -4,19 +4,19 @@
     <title>Block Smasher!</title>
     <style>
     
-
+/* 
 @font-face {
   font-family: 'Ubuntu';
   font-style: normal;
   font-weight: 500;
-  src: url('/ubuntu-v20-latin-500.eot'); /* IE9 Compat Modes */
+  src: url('/ubuntu-v20-latin-500.eot'); 
   src: local(''),
-       url('/ubuntu-v20-latin-500.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
-       url('/ubuntu-v20-latin-500.woff2') format('woff2'), /* Super Modern Browsers */
-       url('/ubuntu-v20-latin-500.woff') format('woff'), /* Modern Browsers */
-       url('/ubuntu-v20-latin-500.ttf') format('truetype'), /* Safari, Android, iOS */
-       url('/ubuntu-v20-latin-500.svg#Ubuntu') format('svg'); /* Legacy iOS */
-}
+       url('/ubuntu-v20-latin-500.eot?#iefix') format('embedded-opentype'), 
+       url('/ubuntu-v20-latin-500.woff2') format('woff2'),
+       url('/ubuntu-v20-latin-500.woff') format('woff'),
+       url('/ubuntu-v20-latin-500.ttf') format('truetype'), 
+       url('/ubuntu-v20-latin-500.svg#Ubuntu') format('svg'); 
+} */
 @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@500&display=swap');
       html, body {
         width:  100%;
@@ -191,11 +191,81 @@
           if (this.attacking) {
             offset = 50;
           }
+          if (this.username == username){
+            
+          ctx.save();
+          ctx.translate(canvas.width/2, canvas.height/2);
+          ctx.rotate(this.rotation * Math.PI/180);
+          //fillText([text], [x], [y]); [confirmed]
+          ctx.fillStyle = this.color;
+          ctx.fillRect(this.width/-2,this.height/-2,this.width,this.height);
+          ctx.fillStyle = "black";
+        
+          ctx.beginPath();
+          ctx.moveTo(25+offset,25+offset);
+          ctx.lineTo(50+offset,25+offset);
+          ctx.lineTo(25+offset,50+offset);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.moveTo(-25-offset,25+offset);
+          ctx.lineTo(-50-offset,25+offset);
+          ctx.lineTo(-25-offset,50+offset);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.moveTo(25+offset,-25-offset);
+          ctx.lineTo(50+offset,-25-offset);
+          ctx.lineTo(25+offset,-50-offset);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.moveTo(-25-offset,-25-offset);
+          ctx.lineTo(-50-offset,-25-offset);
+          ctx.lineTo(-25-offset,-50-offset);
+          ctx.fill();
+          
+          
+          ctx.strokeStyle= "#ACABB3";
+          ctx.lineWidth = 5;
+          ctx.beginPath();
+          ctx.moveTo(25,25);
+          ctx.lineTo(25+offset,25+offset);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(-25,25);
+          ctx.lineTo(-25-offset,25+offset);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(25,-25);
+          ctx.lineTo(25+offset,-25-offset);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(-25,-25);
+          ctx.lineTo(-25-offset,-25-offset);
+          ctx.stroke();
+
+
+          
+          ctx.restore();
+          
+                   
+          ctx.fillStyle = this.afkColor;
+          ctx.font = "25px Ubuntu";
+          ctx.textAlign = "center";
+          ctx.fillText(this.afkSymbol + this.afkSymbol + this.username + this.afkSymbol + this.afkSymbol,canvas.width/2, canvas.height/2-40);
+          ctx.fillStyle = "grey";
+          ctx.font = "30px Ubuntu";
+          ctx.textAlign = "center";
+          ctx.fillText(this.message,canvas.width/2, canvas.height/2-75);    
+          
+
+          } else {
+            
+        
           var posX = this.width/-2;
           var posY = this.height/-2;
-          
+          // this.position.x -= players[username].position.x;
+          // this.position.y -= players[username].position.y;
           ctx.save();
-          ctx.translate(this.position.x+this.width/2, this.position.y+this.height/2);
+          ctx.translate(this.position.x+canvas.width/2, this.position.y+canvas.height/2);
           ctx.rotate(this.rotation * Math.PI/180);
           //fillText([text], [x], [y]); [confirmed]
           ctx.fillStyle = this.color;
@@ -251,13 +321,14 @@
           ctx.fillStyle = this.afkColor;
           ctx.font = "25px Ubuntu";
           ctx.textAlign = "center";
-          ctx.fillText(this.afkSymbol + this.afkSymbol + this.username + this.afkSymbol + this.afkSymbol,this.position.x+this.width/2, this.position.y-10);
+          ctx.fillText(this.afkSymbol + this.afkSymbol + this.username + this.afkSymbol + this.afkSymbol,this.position.x+canvas.width/2, this.position.y+canvas.height/2-10);
           ctx.fillStyle = "grey";
           ctx.font = "30px Ubuntu";
           ctx.textAlign = "center";
-          ctx.fillText(this.message,this.position.x+this.width/2, this.position.y-45);
+          ctx.fillText(this.message,this.position.x+canvas.width/2, this.position.y+canvas.height/2-45);   
           
 
+          }
         }
         test(){
           alert("Created");
@@ -397,7 +468,8 @@
               players[usernameList[i]].rotation +=2.6;
             }
           }
-          if(usernameList[i] != username){6
+          
+          if(usernameList[i] != username){
             players[usernameList[i]].create();
           }
           players[usernameList[i]].prevX = players[usernameList[i]].position.x;
@@ -426,8 +498,8 @@ socket.on('move', function(user, valX, valY, valR,atk){
     
   }
   if(user != username){
-    players[user].position.x = valX;
-    players[user].position.y = valY;
+    players[user].position.x = valX - players[username].position.x;
+    players[user].position.y = valY - players[username].position.y;
     players[user].rotation = valR;
     players[user].attacking = atk;
   }
@@ -466,10 +538,10 @@ socket.on('update', function(user, msg){
 socket.on('spawn player', function(user) {
   console.log(spawned);
   if (!spawned && user != ""){
-    players[user] = new Player({x:100, y:400, color:"blue", username:user});
+    players[user] = new Player({x:-100, y:-100, color:"blue", username:user});
     spawned = true;
   } else {
-    players[user] = new Player({x:100, y:400, color:"red", username:user});
+    players[user] = new Player({x:-100, y:-100, color:"red", username:user});
   }
   usernameList.push(user);
 
@@ -477,7 +549,7 @@ socket.on('spawn player', function(user) {
 });
 function spawnPlayerManual(user) {
   console.log("created");
-  players[user] = new Player({x:100, y:400, color:"red", username:user});
+  players[user] = new Player({x:-100, y:-100, color:"red", username:user});
   usernameList.push(user);
 }
 function checkOverflow(element) {
