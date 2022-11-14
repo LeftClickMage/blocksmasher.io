@@ -5,7 +5,7 @@
 
 -node C:\Users\ethan\Downloads\index.js
 
-**download forever npm: **
+**download forever npm:**
 
 -sudo npm install forever -g 
 
@@ -13,7 +13,7 @@
 
 -sudo npm install forever-monitor
 
-**run node.js forever: **
+**run node.js forever:**
 
 -forever start index.js
 
