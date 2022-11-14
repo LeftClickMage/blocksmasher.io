@@ -15,7 +15,7 @@
 
 **run node.js forever:**
 
--forever start index.js
+-forever start/stop index.js
 
 **run ngrok forever:**
 
