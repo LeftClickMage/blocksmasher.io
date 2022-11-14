@@ -13,11 +13,13 @@
 
 -sudo npm install forever-monitor
 
-**run node.js forever:**
+**run node.js with local tunnel:**
 
--forever start/stop index.js
+-npm install -g localtunnel
+-nohup npx localtunnel --port 3000 --subdomain smasher
 
 **run ngrok forever:**
 
 -nohup ngrok http 3000 --log=stdout > ngrok.log &
+
 
