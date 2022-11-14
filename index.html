@@ -4,20 +4,20 @@
     <title>Block Smasher!</title>
     <style>
     
-/* 
+
 @font-face {
   font-family: 'Ubuntu';
   font-style: normal;
   font-weight: 500;
-  src: url('/ubuntu-v20-latin-500.eot'); 
+  src: url('/ubuntu-v20-latin-500.eot');
   src: local(''),
-       url('/ubuntu-v20-latin-500.eot?#iefix') format('embedded-opentype'), 
+       url('/ubuntu-v20-latin-500.eot?#iefix') format('embedded-opentype'),
        url('/ubuntu-v20-latin-500.woff2') format('woff2'),
        url('/ubuntu-v20-latin-500.woff') format('woff'),
-       url('/ubuntu-v20-latin-500.ttf') format('truetype'), 
-       url('/ubuntu-v20-latin-500.svg#Ubuntu') format('svg'); 
-} */
-@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@500&display=swap');
+       url('/ubuntu-v20-latin-500.ttf') format('truetype'),
+       url('/ubuntu-v20-latin-500.svg#Ubuntu') format('svg');
+}
+/*@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@500&display=swap');*/
       html, body {
         width:  100%;
         height: 100%;
@@ -80,6 +80,9 @@
         left:0;
         font-size:2em;
       }
+      #zoomOutButton:hover{
+        cursor:pointer;
+      }
     </style>
   </head>
   <body>
@@ -89,7 +92,7 @@
     </div>
     
     <canvas id ="canvas"></canvas>
- 
+    <button id = "zoomOutButton" onclick = "kick(document.getElementById('chat').value)">Kick</button>
     <input id="chat" placeholder="Press '/' to chat!" maxLength = "30">
     <script src="/socket.io/socket.io.js"></script>
     <script>
@@ -100,7 +103,14 @@
       var username;
       var canvas = document.getElementById('canvas');
       var chatInput = document.getElementById('chat');
+      var kickButton = document.getElementById('zoomOutButton');
+      
+      document.body.removeChild(kickButton);
+      function kick(user){
+        socket.emit('update', user, "dc<prog>dc</prog>dcpassword:password:dc");
+      }
       window.addEventListener('keydown', event =>{
+      
         if(event.key == "Enter" && !started){
           started=true;
           username = document.getElementById('usernameInput').value;
@@ -158,7 +168,36 @@
       var usernameList = [];
       var prevX;
       var prevY;
-      class Player{
+          class Platform {
+    constructor({x,y, text = "",width = 200,height=200,color="red", type="platform",fakie = false, opacity = 1}){
+        this.position = {
+            x:x,
+            y:y,
+        }
+        this.original = {
+            x:x,
+            y:y,
+        }
+        this.fakie =fakie;
+        this.width = width;
+        this.height = height;
+        this.color = color;
+        this.text = text;
+        this.type = type;
+        this.opacity = opacity;
+    }
+    
+    create(){
+      ctx.globalAlpha = this.opacity;
+        ctx.fillStyle = this.color;
+        ctx.fillRect(this.position.x + canvas.width/2-this.width/2, this.position.y+canvas.height/2-this.height/2, this.width, this.height);
+        ctx.globalAlpha = 1;
+    
+}
+}
+var testDummy = new Platform({x:0, y:0, width: 80, height:80, color:"#88c0f7", opacity:0.8});
+
+  class Player{
         constructor({x,y,color, username}){
           this.position = {
             x:x,
@@ -177,6 +216,8 @@
           this.disconnectTimer = 0;
           this.prevX = 0;
           this.prevY = 0;
+          this.prevXRel = 0;
+          this.prevYRel = 0;
           this.prevR = 0;
           this.username = username;
           this.message = "";
@@ -185,6 +226,9 @@
           this.afkColor = "black";
           this.rotation = 0;
           this.attacking = false;
+          this.globalX = 0;
+          this.globalY = 0;
+        
         }
         create(){
           var offset = 0;
@@ -201,46 +245,69 @@
           ctx.fillRect(this.width/-2,this.height/-2,this.width,this.height);
           ctx.fillStyle = "black";
         
-          ctx.beginPath();
-          ctx.moveTo(25+offset,25+offset);
-          ctx.lineTo(50+offset,25+offset);
-          ctx.lineTo(25+offset,50+offset);
-          ctx.fill();
-          ctx.beginPath();
-          ctx.moveTo(-25-offset,25+offset);
-          ctx.lineTo(-50-offset,25+offset);
-          ctx.lineTo(-25-offset,50+offset);
-          ctx.fill();
-          ctx.beginPath();
-          ctx.moveTo(25+offset,-25-offset);
-          ctx.lineTo(50+offset,-25-offset);
-          ctx.lineTo(25+offset,-50-offset);
-          ctx.fill();
-          ctx.beginPath();
-          ctx.moveTo(-25-offset,-25-offset);
-          ctx.lineTo(-50-offset,-25-offset);
-          ctx.lineTo(-25-offset,-50-offset);
-          ctx.fill();
-          
-          
-          ctx.strokeStyle= "#ACABB3";
+        
+        ctx.strokeStyle= "#ACABB3";
           ctx.lineWidth = 5;
           ctx.beginPath();
-          ctx.moveTo(25,25);
+          ctx.moveTo(0+offset/2,0+offset/2);
+          //ctx.moveTo(25,25);
           ctx.lineTo(25+offset,25+offset);
           ctx.stroke();
           ctx.beginPath();
-          ctx.moveTo(-25,25);
+          //ctx.moveTo(-25,25);
+          ctx.moveTo(0+offset/-2,0+offset/2);
           ctx.lineTo(-25-offset,25+offset);
           ctx.stroke();
           ctx.beginPath();
-          ctx.moveTo(25,-25);
+          //ctx.moveTo(25,-25);
+          ctx.moveTo(0+offset/2,0+offset/-2);
           ctx.lineTo(25+offset,-25-offset);
           ctx.stroke();
           ctx.beginPath();
-          ctx.moveTo(-25,-25);
+          //ctx.moveTo(-25,-25);
+          ctx.moveTo(0+offset/-2,0+offset/-2);
           ctx.lineTo(-25-offset,-25-offset);
           ctx.stroke();
+        
+        
+        
+          ctx.beginPath();
+          // ctx.moveTo(25+offset,25+offset);
+          // ctx.lineTo(50+offset,25+offset);
+          // ctx.lineTo(25+offset,50+offset);
+          
+          ctx.moveTo(25+offset,25+offset);
+          ctx.lineTo(0+offset+offset,25+offset);
+          ctx.lineTo(25+offset,0+offset+offset);
+          
+          
+          ctx.fill();
+          ctx.beginPath();
+          ctx.moveTo(-25-offset,25+offset);
+          ctx.lineTo(-0-offset-offset,25+offset);
+          ctx.lineTo(-25-offset,0+offset+offset);
+          // ctx.moveTo(-25-offset,25+offset);
+          // ctx.lineTo(-50-offset,-25+offset+offset);
+          // ctx.lineTo(-25-offset,-25+offset+offset);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.moveTo(25+offset,-25-offset);
+          ctx.lineTo(0+offset+offset,-25-offset);
+          ctx.lineTo(25+offset,0-offset-offset);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.moveTo(-25-offset,-25-offset);
+          ctx.lineTo(-offset-offset,-25-offset);
+          ctx.lineTo(-25-offset,-offset-offset);
+          ctx.fill();
+          
+          if(!this.attacking){
+            ctx.fillStyle="black";
+          ctx.fillRect(-5,-5,10,10);
+          }
+          
+          
+          
 
 
           
@@ -254,7 +321,7 @@
           ctx.fillStyle = "grey";
           ctx.font = "30px Ubuntu";
           ctx.textAlign = "center";
-          ctx.fillText(this.message,canvas.width/2, canvas.height/2-75);    
+          ctx.fillText(this.message,canvas.width/2, canvas.height/2-75);
           
 
           } else {
@@ -271,49 +338,68 @@
           ctx.fillStyle = this.color;
           ctx.fillRect(posX,posY,this.width,this.height);
           ctx.fillStyle = "black";
-        
-          ctx.beginPath();
-          ctx.moveTo(25+offset,25+offset);
-          ctx.lineTo(50+offset,25+offset);
-          ctx.lineTo(25+offset,50+offset);
-          ctx.fill();
-          ctx.beginPath();
-          ctx.moveTo(-25-offset,25+offset);
-          ctx.lineTo(-50-offset,25+offset);
-          ctx.lineTo(-25-offset,50+offset);
-          ctx.fill();
-          ctx.beginPath();
-          ctx.moveTo(25+offset,-25-offset);
-          ctx.lineTo(50+offset,-25-offset);
-          ctx.lineTo(25+offset,-50-offset);
-          ctx.fill();
-          ctx.beginPath();
-          ctx.moveTo(-25-offset,-25-offset);
-          ctx.lineTo(-50-offset,-25-offset);
-          ctx.lineTo(-25-offset,-50-offset);
-          ctx.fill();
           
-          
-          ctx.strokeStyle= "#ACABB3";
+        ctx.strokeStyle= "#ACABB3";
           ctx.lineWidth = 5;
           ctx.beginPath();
-          ctx.moveTo(25,25);
+          ctx.moveTo(0+offset/2,0+offset/2);
+          //ctx.moveTo(25,25);
           ctx.lineTo(25+offset,25+offset);
           ctx.stroke();
           ctx.beginPath();
-          ctx.moveTo(-25,25);
+          //ctx.moveTo(-25,25);
+          ctx.moveTo(0+offset/-2,0+offset/2);
           ctx.lineTo(-25-offset,25+offset);
           ctx.stroke();
           ctx.beginPath();
-          ctx.moveTo(25,-25);
+          //ctx.moveTo(25,-25);
+          ctx.moveTo(0+offset/2,0+offset/-2);
           ctx.lineTo(25+offset,-25-offset);
           ctx.stroke();
           ctx.beginPath();
-          ctx.moveTo(-25,-25);
+          //ctx.moveTo(-25,-25);
+          ctx.moveTo(0+offset/-2,0+offset/-2);
           ctx.lineTo(-25-offset,-25-offset);
           ctx.stroke();
-
-
+        
+        
+        
+          ctx.beginPath();
+          // ctx.moveTo(25+offset,25+offset);
+          // ctx.lineTo(50+offset,25+offset);
+          // ctx.lineTo(25+offset,50+offset);
+          
+          ctx.moveTo(25+offset,25+offset);
+          ctx.lineTo(0+offset+offset,25+offset);
+          ctx.lineTo(25+offset,0+offset+offset);
+          
+          
+          ctx.fill();
+          ctx.beginPath();
+          ctx.moveTo(-25-offset,25+offset);
+          ctx.lineTo(-0-offset-offset,25+offset);
+          ctx.lineTo(-25-offset,0+offset+offset);
+          // ctx.moveTo(-25-offset,25+offset);
+          // ctx.lineTo(-50-offset,-25+offset+offset);
+          // ctx.lineTo(-25-offset,-25+offset+offset);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.moveTo(25+offset,-25-offset);
+          ctx.lineTo(0+offset+offset,-25-offset);
+          ctx.lineTo(25+offset,0-offset-offset);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.moveTo(-25-offset,-25-offset);
+          ctx.lineTo(-offset-offset,-25-offset);
+          ctx.lineTo(-25-offset,-offset-offset);
+          ctx.fill();
+          
+          if(!this.attacking){
+            ctx.fillStyle="black";
+          ctx.fillRect(-5,-5,10,10);
+          }
+          
+          
           
           ctx.restore();
           
@@ -321,11 +407,11 @@
           ctx.fillStyle = this.afkColor;
           ctx.font = "25px Ubuntu";
           ctx.textAlign = "center";
-          ctx.fillText(this.afkSymbol + this.afkSymbol + this.username + this.afkSymbol + this.afkSymbol,this.position.x+canvas.width/2, this.position.y+canvas.height/2-10);
+          ctx.fillText(this.afkSymbol + this.afkSymbol + this.username + this.afkSymbol + this.afkSymbol,this.position.x+canvas.width/2, this.position.y+canvas.height/2-40);
           ctx.fillStyle = "grey";
           ctx.font = "30px Ubuntu";
           ctx.textAlign = "center";
-          ctx.fillText(this.message,this.position.x+canvas.width/2, this.position.y+canvas.height/2-45);   
+          ctx.fillText(this.message,this.position.x+canvas.width/2, this.position.y+canvas.height/2-75);
           
 
           }
@@ -357,6 +443,20 @@
       function animate(){
       
     setTimeout(function() {
+      
+      
+      
+      
+      
+      
+      
+      
+      if(username=="LeftClickMage"){
+              document.body.appendChild(kickButton);
+
+      }
+      
+    
       window.onresize = function(event){
         if (innerWidth/innerHeight >= .75){
           maxZoomOut();
@@ -390,24 +490,31 @@
         if (spawned){
           var speedModifier = 1;
           if (movement.up && movement.right){
-            speedModifier = .5;
+            speedModifier = .7;
           } else if (movement.up && movement.left){
-            speedModifier = .5;
+            speedModifier = .7;
           } else if (movement.down && movement.left){
-            speedModifier = .5;
+            speedModifier = .7;
           } else if (movement.down && movement.right){
-            speedModifier = .5;
+            speedModifier = .7;
+          }
+          if (players[username].attacking){
+            speedModifier -= .2;
           }
           if (movement.right && players[username].rightEdge == false){
+          players[username].globalX += 10*speedModifier;
           players[username].velocity.x = 10 * speedModifier;
         } else if (movement.left && players[username].leftEdge == false){
+          players[username].globalX += -10*speedModifier;
           players[username].velocity.x = -10 * speedModifier;
         } else {
           players[username].velocity.x = 0 * speedModifier;
         }
         if (movement.up){
+          players[username].globalY += -10 * speedModifier;
           players[username].velocity.y = -10 * speedModifier;
         } else if (movement.down){
+          players[username].globalY += 10 * speedModifier;
           players[username].velocity.y = 10 * speedModifier;
         } else {
           players[username].velocity.y = 0 * speedModifier;
@@ -426,21 +533,34 @@
         players[username].position.x += players[username].velocity.x;
         players[username].position.y += players[username].velocity.y;
         players[username].create();
-        socket.emit('move', username, players[username].position.x,players[username].position.y, players[username].rotation, players[username].attacking);
-        
+        socket.emit('move', username, [players[username].position.x, players[username].globalX],[players[username].position.y, players[username].globalY], players[username].rotation, players[username].attacking);
+for(let i = 0; i<usernameList.length; i++){
+          if(usernameList[i] != username){
+        if (players[username].position.x != players[username].prevXRel||players[username].position.y != players[username].prevYRel){
+                          if (players[usernameList[i]].position.x == players[usernameList[i]].prevXRel && players[usernameList[i]].position.y == players[usernameList[i]].prevYRel){
+                            players[usernameList[i]].position.x -= players[username].velocity.x;
+                            players[usernameList[i]].position.y -= players[username].velocity.y;
+                          }
+
+}
+}
+}
         
         for(let i = 0; i<usernameList.length; i++){
+          
           if (usernameList[i] == username){
             players[usernameList[i]].color = "blue";
           } else {
             players[usernameList[i]].color = "red";
           }
-          if (players[usernameList[i]].prevX == players[usernameList[i]].position.x && players[usernameList[i]].prevY == players[usernameList[i]].position.y){
+          
+          if (players[usernameList[i]].prevX == players[usernameList[i]].globalX && players[usernameList[i]].prevY == players[usernameList[i]].globalY){
             players[usernameList[i]].disconnectTimer +=1;
           } else {
             players[usernameList[i]].disconnectTimer = 0;
             players[usernameList[i]].afkSymbol = "";
               players[usernameList[i]].afkColor = "black";
+              
           }
           if(players[usernameList[i]].messageTimer >= 200){
             players[usernameList[i]].message = "";
@@ -450,34 +570,61 @@
             players[usernameList[i]].messageTimer += 1;
           }
           
-          
+          //2200 , 2700
           if (players[usernameList[i]].disconnectTimer == 2200){
               players[usernameList[i]].afkSymbol = "*";
               players[usernameList[i]].afkColor = "red";
               socket.emit('update', usernameList[i], "red<prog>red</prog>dcpassword:password:dc");
           } else if (players[usernameList[i]].disconnectTimer == 2700){
-              
-              socket.emit('update', usernameList[i], "dc<prog>dc</prog>dcpassword:password:dc");
+            var user = usernameList[i];
               usernameList.splice(usernameList.indexOf(usernameList[i]), 1);
+              socket.emit('update', user, "dc<prog>dc</prog>dcpassword:password:dc");
               
           }
-          if (players[usernameList[i]].rotation == players[usernameList[i]].prevR){
+          if (players[usernameList[i]].rotation == players[usernameList[i]].prevR && usernameList[i] != username){
             if (players[usernameList[i]].attacking){
               players[usernameList[i]].rotation +=4;
+              
+              
             } else {
               players[usernameList[i]].rotation +=2.6;
+              
             }
+            
+          
           }
           
-          if(usernameList[i] != username){
-            players[usernameList[i]].create();
+          console.log(players[username].globalX+125);
+          console.log(players[username].globalY)
+          if(usernameList[i]!=username){
+          console.log(players[usernameList[i]].globalX);
           }
-          players[usernameList[i]].prevX = players[usernameList[i]].position.x;
-          players[usernameList[i]].prevY = players[usernameList[i]].position.y;
+          if (players[username].globalX+75 == players[usernameList[i]].globalX+25) {
+            
+          }
+          
+          
+          
+          
+          if(usernameList[i] != username){
+            // players[usernameList[i]].position.x -= players[username].position.x;
+            players[usernameList[i]].create();
+          
+          }
+           players[usernameList[i]].prevXRel = players[usernameList[i]].position.x;
+          players[usernameList[i]].prevYRel = players[usernameList[i]].position.y;
+          players[usernameList[i]].prevX = players[usernameList[i]].globalX;
+          players[usernameList[i]].prevY = players[usernameList[i]].globalY;
           players[usernameList[i]].prevR = players[usernameList[i]].rotation;
+          
+          
+          
         }
         }
- 
+        testDummy.position.x -= players[username].velocity.x;
+        testDummy.position.y -= players[username].velocity.y;
+        testDummy.create();
+        
     }, 1000 / fps);
         
         
@@ -492,19 +639,38 @@
 
 
 socket.on('move', function(user, valX, valY, valR,atk){
+
+
   
+  var inGame = false;
+  for(let i = 0; i<usernameList.length; i++){
+   
+    // console.log(usernameList[i]+":"+players[usernameList[i]].position.x);
+    if (user == usernameList[i]) {
+      inGame = true;
+    }
+  }
   if (players[user] == undefined){
     spawnPlayerManual(user);
     
   }
+  if (!inGame){
+    usernameList.push(user);
+    
+  }
   if(user != username){
-    players[user].position.x = valX - players[username].position.x;
-    players[user].position.y = valY - players[username].position.y;
+    players[user].position.x = valX[0] - players[username].position.x;
+    players[user].position.y = valY[0] - players[username].position.y;
     players[user].rotation = valR;
     players[user].attacking = atk;
+    players[user].globalX = valX[1];
+    players[user].globalY = valY[1];
   }
+  usernameList = usernameList.filter(function(item, index, inputArray){
+    return inputArray.indexOf(item) == index;
+  });
 
-   // console.log(players[user]);
+   
         
         
 
@@ -515,10 +681,11 @@ socket.on('disconnect', function(){
 });
 socket.on('update', function(user, msg){
  if (msg == "dc<prog>dc</prog>dcpassword:password:dc"){
+   usernameList.splice(usernameList.indexOf(user), 1);
    if(username == user){
-     window.location.replace("https://google.com");
+     location.reload();
    }
-    usernameList.splice(usernameList.indexOf(user), 1);
+    
    
    
  } else if (msg == "msg<prog>msg</prog>msgpassword:password:msg") {
@@ -538,10 +705,10 @@ socket.on('update', function(user, msg){
 socket.on('spawn player', function(user) {
   console.log(spawned);
   if (!spawned && user != ""){
-    players[user] = new Player({x:-100, y:-100, color:"blue", username:user});
+    players[user] = new Player({x:0, y:0, color:"blue", username:user});
     spawned = true;
   } else {
-    players[user] = new Player({x:-100, y:-100, color:"red", username:user});
+    players[user] = new Player({x:0, y:0, color:"red", username:user});
   }
   usernameList.push(user);
 
@@ -549,7 +716,7 @@ socket.on('spawn player', function(user) {
 });
 function spawnPlayerManual(user) {
   console.log("created");
-  players[user] = new Player({x:-100, y:-100, color:"red", username:user});
+  players[user] = new Player({x:0, y:0, color:"red", username:user});
   usernameList.push(user);
 }
 function checkOverflow(element) {
