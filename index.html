@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <title>Smasher.ga - Smash or Get Smashed!</title>
 <link rel="icon" href = "https://i.ibb.co/pPWYF9D/Screenshot-2022-11-13-8-58-50-PM-removebg-preview.png"  type="image/gif">
@@ -19,7 +19,8 @@
        url('/ubuntu-v20-latin-500.ttf') format('truetype'),
        url('/ubuntu-v20-latin-500.svg#Ubuntu') format('svg');
 }
-/*@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@500&display=swap');*/
+
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@500&display=swap');
       html, body {
         width:  100%;
         height: 100%;
@@ -38,15 +39,8 @@
         z-index:1;
       }
       #usernameInput{
-        position:absolute;
-        top:50%;
-        left:50%;
-        transform:translate(-50%, -50%);
-        margin:0;
-        width:20em;
         height:4em;
-        text-align:center;
-        font-size:2.5em;
+        font-size:3em;
       }
       #usernameInput:focus{
         outline:none;
@@ -86,17 +80,24 @@
         cursor:pointer;
       }
     </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
   <body>
     <script src = "https://mhsmill.com/loadingPage.js?Version=1.7"></script>
 
-    <div id = "begin">
-      <input id = "usernameInput" placeholder="Enter Your Username" maxLength="13">
+    <div id = "begin" class="text-center d-flex align-items-center">
+      <input id = "usernameInput" placeholder="Enter Your Username" maxLength="13" class="container text-center">
     </div>
     
     <canvas id ="canvas"></canvas>
     <button id = "zoomOutButton" onclick = "kick(document.getElementById('chat').value)">Kick</button>
     <input id="chat" placeholder="Press '/' to chat!" maxLength = "30">
+    
+    
     <script src="/socket.io/socket.io.js"></script>
     <script>
       var spawned = false;
