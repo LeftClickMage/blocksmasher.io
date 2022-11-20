@@ -25,4 +25,10 @@
 
 -nohup ngrok http 3000 --log=stdout > ngrok.log &
 
+**Updating Code on LightSail:**
 
+ssh -i LightsailDefaultKey.pem bitnami@52.54.56.234
+cd /opt/bitnami/apache2/htdocs/blocksmasher.io
+git pull
+Username: LeftClickMage
+Password: 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
