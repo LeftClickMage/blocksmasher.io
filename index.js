@@ -35,8 +35,8 @@ io.on('connection', (socket) => {
   });
 });
 
-server.listen(2096, () => {
-  console.log('listening on *:2096');
+server.listen(80, () => {
+  console.log('listening on *:80');
 });
 io.on('connection', (socket) => {
   socket.on('spawn player', (msg) => {
