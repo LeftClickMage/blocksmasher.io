@@ -35,8 +35,8 @@ io.on('connection', (socket) => {
   });
 });
 
-server.listen(8080, () => {
-  console.log('listening on *:8080');
+server.listen(443, () => {
+  console.log('listening on *:443');
 });
 io.on('connection', (socket) => {
   socket.on('spawn player', (msg) => {
