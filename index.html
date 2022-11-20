@@ -604,9 +604,7 @@ for(let i = 0; i<usernameList.length; i++){
           }
           
           
-          if((players[username].globalY +125)-getDecimalPart(players[username].rotation/360)*500 <= players[usernameList[i]].globalY+25 && (players[usernameList[i]].globalY +125)-getDecimalPart(players[username].rotation/360)*500 >= players[usernameList[i]].globalY-25) {
-              console.log("inbetween");
-          }
+          
           
           if(usernameList[i] != username){
             // players[usernameList[i]].position.x -= players[username].position.x;
@@ -638,14 +636,7 @@ for(let i = 0; i<usernameList.length; i++){
     
     
 
-    function getDecimalPart(num) {
-  if (Number.isInteger(num)) {
-    return 0;
-  }
 
-  const decimalStr = num.toString().split('.')[1];
-  return Number(decimalStr);
-}
 
 socket.on('move', function(user, valX, valY, valR,atk){
 
