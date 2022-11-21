@@ -25,7 +25,19 @@
 
 -nohup ngrok http 3000 --log=stdout > ngrok.log &
 
-**Updating Code on LightSail:**
+**Putting code on GITHUB:**
+
+-cd blocksmasher.io
+
+-git commit -am Updated Code
+
+-git push 
+
+-Username: LeftClickMage
+
+-Password: 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
+
+**Taking code from GITHUB and putting it on LightSail:**
 
 -ssh -i LightsailDefaultKey.pem bitnami@52.54.56.234
 
@@ -36,3 +48,5 @@
 -Username: LeftClickMage
 
 -Password: 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
+
+
