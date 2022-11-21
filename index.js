@@ -5,28 +5,28 @@ const path = require('path');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
-app.use(express.static(path.join(__dirname, '/')));
+app.use(express.static(path.join(__dirname,'..', '/')));
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
 app.get('/ubuntu-v20-latin-500.eot', (req, res) => {
-  res.sendFile(__dirname + '/ubuntu-v20-latin-500.eot');
+  res.sendFile(__dirname + '../ubuntu-v20-latin-500.eot');
 });
 app.get('/ubuntu-v20-latin-500.eot?#iefix', (req, res) => {
-  res.sendFile(__dirname + '/ubuntu-v20-latin-500.eot?#iefix');
+  res.sendFile(__dirname + '../ubuntu-v20-latin-500.eot?#iefix');
 });
 app.get('/ubuntu-v20-latin-500.woff2', (req, res) => {
-  res.sendFile(__dirname + '/ubuntu-v20-latin-500.woff2');
+  res.sendFile(__dirname + '../ubuntu-v20-latin-500.woff2');
 });
 app.get('/ubuntu-v20-latin-500.woff', (req, res) => {
-  res.sendFile(__dirname + '/ubuntu-v20-latin-500.woff');
+  res.sendFile(__dirname + '../ubuntu-v20-latin-500.woff');
 });
 
 app.get('/ubuntu-v20-latin-500.ttf', (req, res) => {
-  res.sendFile(__dirname + '/ubuntu-v20-latin-500.ttf');
+  res.sendFile(__dirname + '../ubuntu-v20-latin-500.ttf');
 });
 app.get('/ubuntu-v20-latin-500.svg#Ubuntu', (req, res) => {
-  res.sendFile(__dirname + '/ubuntu-v20-latin-500.svg#Ubuntu');
+  res.sendFile(__dirname + '../ubuntu-v20-latin-500.svg#Ubuntu');
 });
 
 io.on('connection', (socket) => {
