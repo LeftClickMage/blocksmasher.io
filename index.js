@@ -7,7 +7,7 @@ const { Server } = require("socket.io");
 const io = new Server(server);
 app.use(express.static(path.join(__dirname,'..', '/')));
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/index.html');
+  res.sendFile(__dirname + '/arena.html');
 });
 app.get('/ubuntu-v20-latin-500.eot', (req, res) => {
   res.sendFile(__dirname + '../ubuntu-v20-latin-500.eot');
