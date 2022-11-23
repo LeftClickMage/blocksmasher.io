@@ -56,3 +56,7 @@ io.on('connection', (socket) => {
     io.emit('update', user, msg);
   });
 });
+
+var port = "3000";
+app.set('port', port);
+module.exports = app;
