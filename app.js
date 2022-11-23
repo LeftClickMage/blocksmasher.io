@@ -42,33 +42,33 @@ app.get('/', (req, res) => {
 //   res.sendFile(__dirname + '../ubuntu-v20-latin-500.svg#Ubuntu');
 // });
 
-// io.on('connection', (socket) => {
-//   console.log('a user connected');
-//   socket.on('disconnect', () => {
-//     console.log("disconnected");
-//   });
-// });
+io.on('connection', (socket) => {
+  console.log('a user connected');
+  socket.on('disconnect', () => {
+    console.log("disconnected");
+  });
+});
 
 server.listen(3000, () => {
   console.log('listening on *:3000');
 });
-// io.on('connection', (socket) => {
-//   socket.on('spawn player', (msg) => {
-//     io.emit('spawn player', msg);
-//   });
-// });
+io.on('connection', (socket) => {
+  socket.on('spawn player', (msg) => {
+    io.emit('spawn player', msg);
+  });
+});
 
-// io.on('connection', (socket) => {
-//   socket.on('move', (msg, val, val2, valR, atk) => {
-//     io.emit('move', msg, val, val2, valR, atk);
-//   });
-// });
+io.on('connection', (socket) => {
+  socket.on('move', (msg, val, val2, valR, atk) => {
+    io.emit('move', msg, val, val2, valR, atk);
+  });
+});
 
-// io.on('connection', (socket) => {
-//   socket.on('update', (user, msg) => {
-//     io.emit('update', user, msg);
-//   });
-// });
+io.on('connection', (socket) => {
+  socket.on('update', (user, msg) => {
+    io.emit('update', user, msg);
+  });
+});
 
 
 app.set('views', path.join(__dirname, 'views'));
