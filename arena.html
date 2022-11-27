@@ -236,14 +236,19 @@ var testDummy = new Platform({x:0, y:0, width: 80, height:80, color:"#88c0f7", o
         
         }
         create(){
+          var shield = 0;
           var offset = 0;
           if (this.attacking) {
             offset = 50;
+            shield = 35;
           }
           if (this.username == username){
             
           ctx.save();
           ctx.translate(canvas.width/2, canvas.height/2);
+          ctx.beginPath();
+          ctx.arc(0, 0, 40+ offset + shield, 0, 2 * Math.PI);
+          ctx.stroke();
           ctx.rotate(this.rotation * Math.PI/180);
           //fillText([text], [x], [y]); [confirmed]
           ctx.fillStyle = this.color;
@@ -338,6 +343,9 @@ var testDummy = new Platform({x:0, y:0, width: 80, height:80, color:"#88c0f7", o
           // this.position.y -= players[username].position.y;
           ctx.save();
           ctx.translate(this.position.x+canvas.width/2, this.position.y+canvas.height/2);
+          ctx.beginPath();
+          ctx.arc(0, 0, 40+ offset + shield, 0, 2 * Math.PI);
+          ctx.stroke();
           ctx.rotate(this.rotation * Math.PI/180);
           //fillText([text], [x], [y]); [confirmed]
           ctx.fillStyle = this.color;
