@@ -223,6 +223,7 @@
         this.text = text;
         this.type = type;
         this.opacity = opacity;
+        
     }
     
     create(){
@@ -268,6 +269,7 @@ var testDummy = new Platform({x:0, y:0, width: 80, height:80, color:"#88c0f7", o
           this.globalY = 0;
           this.offset = 50;
           this.killed = false;
+          this.spawncooldown = 90;
         
         }
         create(){
@@ -594,7 +596,7 @@ var testDummy = new Platform({x:0, y:0, width: 80, height:80, color:"#88c0f7", o
         players[username].position.x += players[username].velocity.x;
         players[username].position.y += players[username].velocity.y;
         players[username].create();
-        socket.emit('move', username, [players[username].position.x, players[username].globalX, players[username].offset],[players[username].position.y, players[username].globalY], players[username].rotation, players[username].attacking);
+        socket.emit('move', username, [players[username].position.x, players[username].globalX, players[username].offset, players[username.spawncooldown]],[players[username].position.y, players[username].globalY], players[username].rotation, players[username].attacking);
 for(let i = 0; i<usernameList.length; i++){
           if(usernameList[i] != username){
         if (players[username].position.x != players[username].prevXRel||players[username].position.y != players[username].prevYRel){
@@ -617,7 +619,7 @@ if (players[username].offset>40){
 }
         document.getElementById('stamBadge').innerHTML = players[username].offset*2;
         for(let i = 0; i<usernameList.length; i++){
-          
+          players[usernameList[i]].spawncooldown -= 1;
           if (usernameList[i] == username){
             players[usernameList[i]].color = "blue";
           } else {
@@ -690,12 +692,12 @@ if (players[username].offset>40){
 
             if(players[username].attacking==true && dist > players[username].offset+45 && dist < players[username].offset+105){
               
-              socket.emit('update', usernameList[i], 'killed');
-              players[usernameList[i]].killed = true;
-              usernameList.splice(usernameList.indexOf(usernameList[i]), 1);
-            } else {
-              document.getElementById('canvas').setAttribute("style", "background-color:;");
-            }
+              if(players[usernameList[i]].spawncooldown < 0){
+                socket.emit('update', usernameList[i], 'killed'); 
+                players[usernameList[i]].killed = true; 
+                usernameList.splice(usernameList.indexOf(usernameList[i]), 1);
+              }
+            } 
 
 
 
@@ -776,6 +778,7 @@ socket.on('move', function(user, valX, valY, valR,atk){
     players[user].globalX = valX[1];
     players[user].globalY = valY[1];
     players[user].offset = valX[2];
+    players[user].spawncooldown = valX[3]
   }
   usernameList = usernameList.filter(function(item, index, inputArray){
     return inputArray.indexOf(item) == index;
