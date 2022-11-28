@@ -1,6 +1,6 @@
 
-var jwt = require('jsonwebtoken');
-var token = jwt.sign({ foo: 'bar' }, 'shhhhh');
+// var jwt = require('jsonwebtoken');
+// var token = jwt.sign({ foo: 'bar' }, 'shhhhh');
 
 const express = require('express');
 const app = express();
@@ -9,7 +9,7 @@ const path = require('path');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
-// app.use(express.static(path.join(__dirname,'..', '/')));
+app.use(express.static(path.join(__dirname, '/')));
 
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/arena.html');

@@ -145,11 +145,16 @@
       window.addEventListener('keydown', event =>{
       
         if(event.key == "Enter" && !started){
-          started=true;
+          
           username = document.getElementById('usernameInput').value;
+          if(username == ""){
+            alert("you need to enter a name");
+          } else {
+            started=true;
           document.body.removeChild(document.getElementById('begin'));
           socket.emit('spawn player', username);
           animate();
+          }
           
         }
         if (event.key == "/"){
