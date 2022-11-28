@@ -29,18 +29,7 @@
         font-family:'Ubuntu', sans-serif;
         overflow:hidden;
       }
-      #begin {
-        width:100vw;
-        height:100vh;
-        background-color:black;
-        position:absolute;
-        top:50%;
-        left:50%;
-        transform:translate(-50%, -50%);
-        margin:0;
-        font-size:1vw;
-        z-index:1;
-      }
+
       #usernameInput{
         height:4em;
         font-size:3em;
@@ -93,13 +82,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
   <body>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script>
+      function handleCredentialResponse(response) {
+        console.log("Encoded JWT ID token: " + response.credential);
+      }
+      window.onload = function () {
+        google.accounts.id.initialize({
+          client_id: "398767346839-d5hn45p53cs1786s8g6pndovl0943ph3.apps.googleusercontent.com",
+          callback: handleCredentialResponse
+        });
+        google.accounts.id.renderButton(
+          document.getElementById("buttonDiv"),
+          { theme: "outline", size: "large" }  // customization attributes
+        );
+        google.accounts.id.prompt(); // also display the One Tap dialog
+      }
+  </script>
+  
     <script src = "https://mhsmill.com/loadingPage.js?Version=1.7"></script>
-
-    <div id = "begin" class="text-center d-flex align-items-center">
-      <input id = "usernameInput" placeholder="Enter Your Username" maxLength="13" class="container text-center">
-      
+    <div id = "begin" class="d-flex align-items-center top-0 position-fixed h-100 w-100 bg-dark" style="z-index:1000000000;">
+    <div class="text-center container-fluid">
+      <input id = "usernameInput" placeholder="Enter Your Username" maxLength="13" class="text-center">
+      <br>
+      <div id="buttonDiv" style="width:300px; position:fixed; left:50%; margin-top:10px; transform:translateX(-50%);"></div> 
     </div>
-    
+    </div>
     <canvas id ="canvas"></canvas>
     <button id = "zoomOutButton" onclick = "kick(document.getElementById('chat').value)">Kick</button>
     <input id="chat" placeholder="Press '/' to chat!" maxLength = "30">
@@ -111,6 +119,7 @@
       </div>
     
 <script src="/socket.io/socket.io.js"></script>
+
     <script>
       var spawned = false;
       var started = false;
