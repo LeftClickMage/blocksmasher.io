@@ -544,6 +544,7 @@ var testDummy = new Platform({x:0, y:0, width: 80, height:80, color:"#88c0f7", o
         requestAnimationFrame(animate);
  
         if (spawned){
+          players[username].spawncooldown -= 1;
 
           var speedModifier = 1;
 
@@ -561,8 +562,10 @@ var testDummy = new Platform({x:0, y:0, width: 80, height:80, color:"#88c0f7", o
           }
       if (players[username].offset>2 && players[username].offset < 15){
   speedModifier =.6;
+
 } else if (players[username].offset <=2) {
   speedModifier =.2;
+
 }
           if (movement.right && players[username].rightEdge == false){
           players[username].globalX += 10*speedModifier;
@@ -595,8 +598,9 @@ var testDummy = new Platform({x:0, y:0, width: 80, height:80, color:"#88c0f7", o
         
         players[username].position.x += players[username].velocity.x;
         players[username].position.y += players[username].velocity.y;
+        
         players[username].create();
-        socket.emit('move', username, [players[username].position.x, players[username].globalX, players[username].offset, players[username.spawncooldown]],[players[username].position.y, players[username].globalY], players[username].rotation, players[username].attacking);
+        socket.emit('move', username, [players[username].position.x, players[username].globalX, players[username].offset, players[username].spawncooldown],[players[username].position.y, players[username].globalY], players[username].rotation, players[username].attacking);
 for(let i = 0; i<usernameList.length; i++){
           if(usernameList[i] != username){
         if (players[username].position.x != players[username].prevXRel||players[username].position.y != players[username].prevYRel){
@@ -608,6 +612,7 @@ for(let i = 0; i<usernameList.length; i++){
 }
 }
 }
+
 if (players[username].offset>40){
   document.getElementById('stamBadge').setAttribute("class", "badge bg-success");
 } else if (players[username].offset>15){
@@ -619,11 +624,12 @@ if (players[username].offset>40){
 }
         document.getElementById('stamBadge').innerHTML = players[username].offset*2;
         for(let i = 0; i<usernameList.length; i++){
-          players[usernameList[i]].spawncooldown -= 1;
+          
           if (usernameList[i] == username){
             players[usernameList[i]].color = "blue";
           } else {
             players[usernameList[i]].color = "red";
+            players[usernameList[i]].spawncooldown -= 1;
           }
           
           if (players[usernameList[i]].prevX == players[usernameList[i]].globalX && players[usernameList[i]].prevY == players[usernameList[i]].globalY){
@@ -778,7 +784,7 @@ socket.on('move', function(user, valX, valY, valR,atk){
     players[user].globalX = valX[1];
     players[user].globalY = valY[1];
     players[user].offset = valX[2];
-    players[user].spawncooldown = valX[3]
+    players[user].spawncooldown = valX[3];
   }
   usernameList = usernameList.filter(function(item, index, inputArray){
     return inputArray.indexOf(item) == index;
