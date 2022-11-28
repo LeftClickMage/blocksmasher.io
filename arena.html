@@ -85,7 +85,9 @@
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script>
       function handleCredentialResponse(response) {
-        console.log("Encoded JWT ID token: " + response);
+        console.log("Encoded JWT ID token: " + response.credentials);
+        var decoded = jwt.decode(response.credentials, {complete:true});
+        console.log(decoded.payload);
       }
       window.onload = function () {
         google.accounts.id.initialize({
