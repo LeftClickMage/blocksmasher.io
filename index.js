@@ -1,4 +1,6 @@
 
+var jwt = require('jsonwebtoken');
+var token = jwt.sign({ foo: 'bar' }, 'shhhhh');
 
 const express = require('express');
 const app = express();
