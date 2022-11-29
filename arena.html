@@ -255,9 +255,9 @@
     
 }
 }
-var inside = new Element({x:0, y:0, width:2000, height:2000, color:"#3fa746", type:"inside"});
-var outside = new Element({x:0, y:0, width:5000, height:5000, color:"green", opacity:.5, type:"outside"});
-var elements = [new Element({x:0, y:0, width: 80, height:80, color:"#88c0f7", opacity:0.8, type:"spawn"}), new Element({x:-1000, y:0, width: 20, height:2000, color:"black", type:"border"}), new Element({x:0, y:-1000, width: 2000, height:20, color:"black", type:"border"}), new Element({x:1000, y:0, width: 20, height:2000, color:"black", type:"border"}), new Element({x:0, y:1000, width: 2000, height:20, color:"black", type:"border"}),new Element({x:1000, color:"green", y:-200, type:"tree"}),new Element({x:-550, color:"green", y:100, type:"tree"}),new Element({x:-300, color:"green", y:-700, type:"tree"}),new Element({x:-87, color:"green", y:876, type:"tree"}),new Element({x:890, color:"green", y:560, type:"tree"})];
+var inside = new Element({x:0, y:0, width:2000, height:2000, color:"#2d0043", type:"inside"});
+var outside = new Element({x:0, y:0, width:5000, height:5000, color:"#edd9af", opacity:.7, type:"outside"});
+var elements = [new Element({x:0, y:0, width: 80, height:80, color:"#88c0f7", opacity:0.8, type:"spawn"}), new Element({x:-1000, y:0, width: 20, height:2000, color:"white", type:"border"}), new Element({x:0, y:-1000, width: 2000, height:20, color:"white", type:"border"}), new Element({x:1000, y:0, width: 20, height:2000, color:"white", type:"border"}), new Element({x:0, y:1000, width: 2000, height:20, color:"white", type:"border"}),new Element({x:1000, color:"green", y:-200, type:"tree"}),new Element({x:-550, color:"green", y:100, type:"tree"}),new Element({x:-300, color:"green", y:-700, type:"tree"}),new Element({x:-87, color:"green", y:876, type:"tree"}),new Element({x:890, color:"green", y:560, type:"tree"}),new Element({x:124, color:"#9518e2", y:-243, type:"tree"}),new Element({x:324, color:"#9518e2", y:543, type:"tree"}),new Element({x:-624, color:"#9518e2", y:743, type:"tree"})];
 var flowers = [new Element({x:300, y:250, color:"blue", type:"flower"}),new Element({x:170, y:270, color:"red", type:"flower"}),new Element({x:-200, y:-500, color:"blue", type:"flower"}),new Element({x:-300, y:250, color:"purple", type:"flower"}),new Element({x:-259, y:-259, color:"blue", type:"flower"}),new Element({x:-700, y:-605, color:"yellow", type:"flower"}),new Element({x:700, y:567, color:"purple", type:"flower"}),new Element({x:-787, y:457, color:"yellow", type:"flower"}),new Element({x:650, y:-432, color:"yellow", type:"flower"}),new Element({x:-100, y:532, color:"yellow", type:"flower"}),new Element({x:134, y:732, color:"purple", type:"flower"}), new Element({x:456, y:-732, color:"yellow", type:"flower"})];
   class Player{
         constructor({x,y,color, username}){
@@ -285,7 +285,7 @@ var flowers = [new Element({x:300, y:250, color:"blue", type:"flower"}),new Elem
           this.message = "";
           this.messageTimer = 0;
           this.afkSymbol = "";
-          this.afkColor = "black";
+          this.afkColor = "white";
           this.rotation = 0;
           this.attacking = false;
           this.globalX = 0;
@@ -315,7 +315,7 @@ var flowers = [new Element({x:300, y:250, color:"blue", type:"flower"}),new Elem
 
 
           ctx.beginPath();
-          
+          ctx.strokeStyle = "white";
           ctx.arc(0, 0, 40+ offset + shield, 0, 2 * Math.PI);
           ctx.stroke();
 
@@ -324,7 +324,7 @@ var flowers = [new Element({x:300, y:250, color:"blue", type:"flower"}),new Elem
 
           ctx.fillStyle = this.color;
           ctx.fillRect(this.width/-2,this.height/-2,this.width,this.height);
-          ctx.fillStyle = "black";
+          ctx.fillStyle = "#24e010";
         
         
         ctx.strokeStyle= "#ACABB3";
@@ -383,7 +383,7 @@ var flowers = [new Element({x:300, y:250, color:"blue", type:"flower"}),new Elem
           ctx.fill();
           
           if(!this.attacking){
-            ctx.fillStyle="black";
+            ctx.fillStyle="white";
           ctx.fillRect(-5,-5,10,10);
           }
           
@@ -415,13 +415,14 @@ var flowers = [new Element({x:300, y:250, color:"blue", type:"flower"}),new Elem
           ctx.translate(this.position.x+canvas.width/2, this.position.y+canvas.height/2);
           ctx.rotate(this.rotation * Math.PI/180);
           ctx.beginPath();
+          ctx.strokeStyle = "white";
           ctx.arc(0, 0, 40+ offset + shield, 0, 2 * Math.PI);
           ctx.stroke();
           
           //fillText([text], [x], [y]); [confirmed]
           ctx.fillStyle = this.color;
           ctx.fillRect(posX,posY,this.width,this.height);
-          ctx.fillStyle = "black";
+          ctx.fillStyle = "#24e010"; //changecolor
           
         ctx.strokeStyle= "#ACABB3";
           ctx.lineWidth = 5;
@@ -479,7 +480,7 @@ var flowers = [new Element({x:300, y:250, color:"blue", type:"flower"}),new Elem
           ctx.fill();
           
           if(!this.attacking){
-            ctx.fillStyle="black";
+            ctx.fillStyle="white";
           ctx.fillRect(-5,-5,10,10);
           }
           
@@ -572,13 +573,13 @@ var flowers = [new Element({x:300, y:250, color:"blue", type:"flower"}),new Elem
           var speedModifier = 1;
 
           if (movement.up && movement.right){
-            speedModifier = .5;
+            speedModifier = .7;
           } else if (movement.up && movement.left){
-            speedModifier = .5;
+            speedModifier = .7;
           } else if (movement.down && movement.left){
-            speedModifier = .5;
+            speedModifier = .7;
           } else if (movement.down && movement.right){
-            speedModifier = .5;
+            speedModifier = .7;
           }
           if (players[username].attacking){
             speedModifier += .2;
@@ -630,12 +631,13 @@ speedModifier-=.1;
 
         players[username].position.x += players[username].velocity.x;
         players[username].position.y += players[username].velocity.y;
-        inside.position.x -= players[username].velocity.x;
-        inside.position.y -= players[username].velocity.y;
-        inside.create();
         outside.position.x -= players[username].velocity.x;
         outside.position.y -= players[username].velocity.y;
         outside.create();
+        inside.position.x -= players[username].velocity.x;
+        inside.position.y -= players[username].velocity.y;
+        inside.create();
+        
 
 
         if (spawned){
@@ -694,7 +696,7 @@ if (players[username].offset>40){
           } else {
             players[usernameList[i]].disconnectTimer = 0;
             players[usernameList[i]].afkSymbol = "";
-              players[usernameList[i]].afkColor = "black";
+              players[usernameList[i]].afkColor = "white";
               
           }
           if(players[usernameList[i]].messageTimer >= 200){
