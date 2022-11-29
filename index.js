@@ -21,7 +21,7 @@ const { DynamoDBClient, ListTablesCommand } = require("@aws-sdk/client-dynamodb"
     console.error(err);
   }
 })();
-app.use(express.static(path.join(__dirname, '/')));
+// app.use(express.static(path.join(__dirname, '/')));
 
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/arena.html');
