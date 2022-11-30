@@ -105,6 +105,32 @@
 <script src="/socket.io/socket.io.js"></script>
 
     <script>
+      function setCookie(cname, cvalue) {
+  document.cookie = cname + "=" + cvalue + ";";
+}
+
+function getCookie(cname) {
+  let name = cname + "=";
+  let ca = document.cookie.split(';');
+  for(let i = 0; i < ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) == ' ') {
+      c = c.substring(1);
+    }
+    if (c.indexOf(name) == 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return "";
+}
+
+      function checkCookie() {
+  let username = getCookie("username");
+  if (username != "") {
+   document.getElementById('usernameInput').value = username;
+  }
+}
+checkCookie();
       var spawned = false;
       var started = false;
       var socket = io();
@@ -126,6 +152,7 @@
           if(username == ""){
             alert("you need to enter a name");
           } else {
+setCookie("username", username);
             started=true;
           document.body.removeChild(document.getElementById('begin'));
           socket.emit('spawn player', username);
