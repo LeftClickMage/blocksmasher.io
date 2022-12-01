@@ -782,7 +782,7 @@ if (players[username].offset>40){
 
             if(players[username].attacking==true && dist > players[username].offset+45 && dist < players[username].offset+105){
               
-              if(players[usernameList[i]].spawncooldown < 0){
+              if(players[usernameList[i]].spawncooldown < 0 && players[username].spawncooldown<0){
                 socket.emit('update', usernameList[i], 'killed'); 
                 players[usernameList[i]].killed = true; 
                 usernameList.splice(usernameList.indexOf(usernameList[i]), 1);
