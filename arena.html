@@ -930,7 +930,7 @@ if(!players[username].attacking && players[username].type=="sniper"){
               
             }
           } else if(players[username].attacking && players[username].type=="sniper") {
-            players[username].atkCooldown=150;
+            players[username].atkCooldown=100;
             document.getElementById("atkCooldownBadge").innerHTML = "Reloading..";
             document.getElementById("atkCooldownBadge").setAttribute("class", "badge bg-secondary");
           }
