@@ -801,17 +801,16 @@ var flowers = [new Element({x:300, y:250, color:"blue", type:"flower"}),new Elem
           
           ctx.restore();
           
-          ctx.globalAlpha = .5;
+          
           ctx.fillStyle = this.afkColor;
           ctx.font = "25px Ubuntu";
           ctx.textAlign = "center";
-          ctx.fillText(this.afkSymbol + this.afkSymbol + this.username + this.afkSymbol + this.afkSymbol,canvas.width/2, canvas.height/2-40);
-          ctx.globalAlpha = 1;
+          ctx.fillText(this.afkSymbol + this.afkSymbol + this.username + this.afkSymbol + this.afkSymbol,this.position.x+canvas.width/2, this.position.y+canvas.height/2-40);
           ctx.fillStyle = "white";
           ctx.font = "30px Ubuntu";
           ctx.textAlign = "center";
-          ctx.fillText(this.message,canvas.width/2, canvas.height/2-75);
-            }
+          ctx.fillText(this.message,this.position.x+canvas.width/2, this.position.y+canvas.height/2-75);
+}
 
 
 
