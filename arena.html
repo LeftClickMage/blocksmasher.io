@@ -717,7 +717,7 @@ var flowers = [new Element({x:300, y:250, color:"blue", type:"flower"}),new Elem
           ctx.rotate(this.rotation * Math.PI/180);
           ctx.beginPath();
             ctx.strokeStyle = "white";
-            ctx.globalAlpha = .3;
+            ctx.globalAlpha = 0;
 
           ctx.arc(0, 0, 375, 0, 2 * Math.PI);
           ctx.stroke();
