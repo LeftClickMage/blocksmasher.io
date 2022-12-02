@@ -23,8 +23,8 @@ const io = new Server(server);
 // })();
 
 
-app.use(express.static(path.join(__dirname, '/')));
-app.use(express.static(path.join(__dirname, '../')));
+// app.use(express.static(path.join(__dirname, '/')));
+// app.use(express.static(path.join(__dirname, '../')));
 
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/arena.html');
