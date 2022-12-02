@@ -9,19 +9,22 @@ const path = require('path');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
-const { DynamoDBClient, ListTablesCommand } = require("@aws-sdk/client-dynamodb");
+// const { DynamoDBClient, ListTablesCommand } = require("@aws-sdk/client-dynamodb");
 
-(async () => {
-  const client = new DynamoDBClient({ region: "us-west-2" });
-  const command = new ListTablesCommand({});
-  try {
-    const results = await client.send(command);
-    console.log(results.TableNames.join("\n"));
-  } catch (err) {
-    console.error(err);
-  }
-})();
-// app.use(express.static(path.join(__dirname, '/')));
+// (async () => {
+//   const client = new DynamoDBClient({ region: "us-west-2" });
+//   const command = new ListTablesCommand({});
+//   try {
+//     const results = await client.send(command);
+//     console.log(results.TableNames.join("\n"));
+//   } catch (err) {
+//     console.error(err);
+//   }d 
+// })();
+
+
+app.use(express.static(path.join(__dirname, '/')));
+app.use(express.static(path.join(__dirname, '../')));
 
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/arena.html');

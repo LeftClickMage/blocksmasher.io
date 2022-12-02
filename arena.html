@@ -96,10 +96,10 @@
     <button id = "zoomOutButton" onclick = "kick(document.getElementById('chat').value)">Kick</button>
     <input id="chat" placeholder="Press '/' to chat!" maxLength = "30" class="position-fixed my-3 mx-4 border border-5 border-dark">
     
-      <div class="container-fluid w-100 mt-2 text-center position-fixed">
-        <p class="display-6 fw-bold text-white bg-dark d-inline-block px-5 py-2 border border-5">Stamina: <span class="badge bg-success" id="stamBadge">50</span></p>
-        
-  
+      <div class="container-fluid w-100 mt-2 text-center position-fixed" id = "stats">
+        <p class="display-6 fw-bold text-white bg-dark d-inline-block px-5 py-2 border border-5" id = "stamina">Stamina: <span class="badge bg-success" id="stamBadge">50</span></p>
+        <p class="display-6 fw-bold text-white bg-dark d-inline-block px-5 py-2 border border-5" id = "cooldown"><span class="badge bg-secondary" id="atkCooldownBadge">Reloading...</span></p>
+
       </div>
     
 <script src="/socket.io/socket.io.js"></script>
@@ -152,10 +152,16 @@ checkCookie();
           if(username == ""){
             alert("you need to enter a name");
           } else {
+            var type = prompt("What class? \n-swordsman \n-sniper");
 setCookie("username", username);
+if(type == "swordsman"){
+  document.getElementById("stats").removeChild(document.getElementById("cooldown"));
+} else if(type == "sniper"){
+  document.getElementById("stats").removeChild(document.getElementById("stamina"));
+}
             started=true;
           document.body.removeChild(document.getElementById('begin'));
-          socket.emit('spawn player', username);
+          socket.emit('spawn player', [username, type]);
           animate();
           }
           
@@ -227,6 +233,7 @@ setCookie("username", username);
         this.type = type;
         this.opacity = opacity;
         
+        
     }
     
     create(){
@@ -289,7 +296,7 @@ var outside = new Element({x:0, y:0, width:5000, height:5000, color:"#edd9af", o
 var elements = [new Element({x:0, y:0, width: 80, height:80, color:"#88c0f7", opacity:0.8, type:"spawn"}), new Element({x:-1000, y:0, width: 20, height:2000, color:"white", type:"border"}), new Element({x:0, y:-1000, width: 2000, height:20, color:"white", type:"border"}), new Element({x:1000, y:0, width: 20, height:2000, color:"white", type:"border"}), new Element({x:0, y:1000, width: 2000, height:20, color:"white", type:"border"}),new Element({x:1000, color:"green", y:-200, type:"tree"}),new Element({x:-550, color:"green", y:100, type:"tree"}),new Element({x:-300, color:"green", y:-700, type:"tree"}),new Element({x:-87, color:"green", y:876, type:"tree"}),new Element({x:890, color:"green", y:560, type:"tree"}),new Element({x:124, color:"#9518e2", y:-243, type:"tree"}),new Element({x:324, color:"#9518e2", y:543, type:"tree"}),new Element({x:-624, color:"#9518e2", y:743, type:"tree"})];
 var flowers = [new Element({x:300, y:250, color:"blue", type:"flower"}),new Element({x:170, y:270, color:"red", type:"flower"}),new Element({x:-200, y:-500, color:"blue", type:"flower"}),new Element({x:-300, y:250, color:"purple", type:"flower"}),new Element({x:-259, y:-259, color:"blue", type:"flower"}),new Element({x:-700, y:-605, color:"yellow", type:"flower"}),new Element({x:700, y:567, color:"purple", type:"flower"}),new Element({x:-787, y:457, color:"yellow", type:"flower"}),new Element({x:650, y:-432, color:"yellow", type:"flower"}),new Element({x:-100, y:532, color:"yellow", type:"flower"}),new Element({x:134, y:732, color:"purple", type:"flower"}), new Element({x:456, y:-732, color:"yellow", type:"flower"})];
   class Player{
-        constructor({x,y,color, username}){
+        constructor({x,y,color, username, type}){
           this.position = {
             x:x,
             y:y,
@@ -298,6 +305,7 @@ var flowers = [new Element({x:300, y:250, color:"blue", type:"flower"}),new Elem
             x:0,
             y:0,
           }
+          this.type=type;
           this.midair = true;
           this.width = 50;
           this.height= 50;
@@ -322,17 +330,22 @@ var flowers = [new Element({x:300, y:250, color:"blue", type:"flower"}),new Elem
           this.offset = 50;
           this.killed = false;
           this.spawncooldown = 90;
+          this.atkCooldown = 150;
         
         }
         create(){
+          if(this.type=="sniper"){
+            this.offset = 300;
+          }
           var shield = 0;
           var offset = 0;
           if (this.attacking) {
             offset = this.offset;
             shield = 35;
-          }
+          } 
           if (this.username == username){
-            
+            if(this.type=="swordsman"){
+
           ctx.save();
           ctx.translate(canvas.width/2, canvas.height/2);
 
@@ -434,9 +447,169 @@ var flowers = [new Element({x:300, y:250, color:"blue", type:"flower"}),new Elem
           ctx.fillText(this.message,canvas.width/2, canvas.height/2-75);
           
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            } else if(this.type == "sniper"){
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+              ctx.save();
+          ctx.translate(canvas.width/2, canvas.height/2);
+
+
+          
+
+
+          ctx.rotate(this.rotation * Math.PI/180);
+
+
+          ctx.beginPath();
+            ctx.strokeStyle = "white";
+            ctx.globalAlpha = .3;
+
+          ctx.arc(0, 0, 375, 0, 2 * Math.PI);
+          ctx.stroke();
+          ctx.globalAlpha=1;
+
+
+          if(this.attacking){
+            ctx.beginPath();
+            ctx.strokeStyle = "white";
+          ctx.arc(0, 0, 40+ offset + shield, 0, 2 * Math.PI);
+          ctx.stroke();
+          
+          
+} 
+  offset = 0;
+
+          
+
+
+
+
+          ctx.fillStyle = this.color;
+          ctx.fillRect(this.width/-2,this.height/-2,this.width,this.height);
+          ctx.fillStyle = "black";
+          ctx.strokeStyle= "#ACABB3";
+          ctx.lineWidth = 5;
+          ctx.beginPath();
+          ctx.moveTo(0+offset/2,0+offset/2);
+          //ctx.moveTo(25,25);
+          ctx.lineTo(25+offset,25+offset);
+          ctx.stroke();
+          ctx.beginPath();
+          //ctx.moveTo(-25,25);
+          ctx.moveTo(0+offset/-2,0+offset/2);
+          ctx.lineTo(-25-offset,25+offset);
+          ctx.stroke();
+          ctx.beginPath();
+          //ctx.moveTo(25,-25);
+          ctx.moveTo(0+offset/2,0+offset/-2);
+          ctx.lineTo(25+offset,-25-offset);
+          ctx.stroke();
+          ctx.beginPath();
+          //ctx.moveTo(-25,-25);
+          ctx.moveTo(0+offset/-2,0+offset/-2);
+          ctx.lineTo(-25-offset,-25-offset);
+          ctx.stroke();
+        
+        
+        
+          ctx.beginPath();
+          // ctx.moveTo(25+offset,25+offset);
+          // ctx.lineTo(50+offset,25+offset);
+          // ctx.lineTo(25+offset,50+offset);
+          
+          ctx.moveTo(25+offset,25+offset);
+          ctx.lineTo(0+offset+offset,25+offset);
+          ctx.lineTo(25+offset,0+offset+offset);
+          
+          
+          ctx.fill();
+          ctx.beginPath();
+          ctx.moveTo(-25-offset,25+offset);
+          ctx.lineTo(-0-offset-offset,25+offset);
+          ctx.lineTo(-25-offset,0+offset+offset);
+          // ctx.moveTo(-25-offset,25+offset);
+          // ctx.lineTo(-50-offset,-25+offset+offset);
+          // ctx.lineTo(-25-offset,-25+offset+offset);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.moveTo(25+offset,-25-offset);
+          ctx.lineTo(0+offset+offset,-25-offset);
+          ctx.lineTo(25+offset,0-offset-offset);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.moveTo(-25-offset,-25-offset);
+          ctx.lineTo(-offset-offset,-25-offset);
+          ctx.lineTo(-25-offset,-offset-offset);
+          ctx.fill();
+            ctx.fillStyle="black";
+          ctx.fillRect(-5,-5,10,10);
+          
+          ctx.restore();
+          
+          ctx.globalAlpha = .5;
+          ctx.fillStyle = this.afkColor;
+          ctx.font = "25px Ubuntu";
+          ctx.textAlign = "center";
+          ctx.fillText(this.afkSymbol + this.afkSymbol + this.username + this.afkSymbol + this.afkSymbol,canvas.width/2, canvas.height/2-40);
+          ctx.globalAlpha = 1;
+          ctx.fillStyle = "white";
+          ctx.font = "30px Ubuntu";
+          ctx.textAlign = "center";
+          ctx.fillText(this.message,canvas.width/2, canvas.height/2-75);
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
           } else {
-            
-          var posX = this.width/-2;
+          if(this.type=="swordsman"){
+            var posX = this.width/-2;
           var posY = this.height/-2;
           // this.position.x -= players[username].position.x;
           // this.position.y -= players[username].position.y;
@@ -528,6 +701,129 @@ var flowers = [new Element({x:300, y:250, color:"blue", type:"flower"}),new Elem
           ctx.fillText(this.message,this.position.x+canvas.width/2, this.position.y+canvas.height/2-75);
           
 
+          }  else if(this.type == "sniper"){
+            
+          
+
+
+
+
+            var posX = this.width/-2;
+          var posY = this.height/-2;
+          // this.position.x -= players[username].position.x;
+          // this.position.y -= players[username].position.y;
+          ctx.save();
+          ctx.translate(this.position.x+canvas.width/2, this.position.y+canvas.height/2);
+          ctx.rotate(this.rotation * Math.PI/180);
+          ctx.beginPath();
+            ctx.strokeStyle = "white";
+            ctx.globalAlpha = .3;
+
+          ctx.arc(0, 0, 375, 0, 2 * Math.PI);
+          ctx.stroke();
+          ctx.globalAlpha=1;
+
+
+          if(this.attacking){
+            ctx.beginPath();
+            ctx.strokeStyle = "white";
+          ctx.arc(0, 0, 40+ offset + shield, 0, 2 * Math.PI);
+          ctx.stroke();
+          
+          
+} 
+  offset = 0;
+
+          
+
+
+
+
+          ctx.fillStyle = this.color;
+          ctx.fillRect(posX,posY,this.width,this.height);
+          ctx.fillStyle = "black";
+          ctx.strokeStyle= "#ACABB3";
+          ctx.lineWidth = 5;
+          ctx.beginPath();
+          ctx.moveTo(0+offset/2,0+offset/2);
+          //ctx.moveTo(25,25);
+          ctx.lineTo(25+offset,25+offset);
+          ctx.stroke();
+          ctx.beginPath();
+          //ctx.moveTo(-25,25);
+          ctx.moveTo(0+offset/-2,0+offset/2);
+          ctx.lineTo(-25-offset,25+offset);
+          ctx.stroke();
+          ctx.beginPath();
+          //ctx.moveTo(25,-25);
+          ctx.moveTo(0+offset/2,0+offset/-2);
+          ctx.lineTo(25+offset,-25-offset);
+          ctx.stroke();
+          ctx.beginPath();
+          //ctx.moveTo(-25,-25);
+          ctx.moveTo(0+offset/-2,0+offset/-2);
+          ctx.lineTo(-25-offset,-25-offset);
+          ctx.stroke();
+        
+        
+        
+          ctx.beginPath();
+          // ctx.moveTo(25+offset,25+offset);
+          // ctx.lineTo(50+offset,25+offset);
+          // ctx.lineTo(25+offset,50+offset);
+          
+          ctx.moveTo(25+offset,25+offset);
+          ctx.lineTo(0+offset+offset,25+offset);
+          ctx.lineTo(25+offset,0+offset+offset);
+          
+          
+          ctx.fill();
+          ctx.beginPath();
+          ctx.moveTo(-25-offset,25+offset);
+          ctx.lineTo(-0-offset-offset,25+offset);
+          ctx.lineTo(-25-offset,0+offset+offset);
+          // ctx.moveTo(-25-offset,25+offset);
+          // ctx.lineTo(-50-offset,-25+offset+offset);
+          // ctx.lineTo(-25-offset,-25+offset+offset);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.moveTo(25+offset,-25-offset);
+          ctx.lineTo(0+offset+offset,-25-offset);
+          ctx.lineTo(25+offset,0-offset-offset);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.moveTo(-25-offset,-25-offset);
+          ctx.lineTo(-offset-offset,-25-offset);
+          ctx.lineTo(-25-offset,-offset-offset);
+          ctx.fill();
+            ctx.fillStyle="black";
+          ctx.fillRect(-5,-5,10,10);
+          
+          ctx.restore();
+          
+          ctx.globalAlpha = .5;
+          ctx.fillStyle = this.afkColor;
+          ctx.font = "25px Ubuntu";
+          ctx.textAlign = "center";
+          ctx.fillText(this.afkSymbol + this.afkSymbol + this.username + this.afkSymbol + this.afkSymbol,canvas.width/2, canvas.height/2-40);
+          ctx.globalAlpha = 1;
+          ctx.fillStyle = "white";
+          ctx.font = "30px Ubuntu";
+          ctx.textAlign = "center";
+          ctx.fillText(this.message,canvas.width/2, canvas.height/2-75);
+            }
+
+
+
+
+
+
+
+
+
+
+
+          
           }
         }
 
@@ -560,10 +856,10 @@ var flowers = [new Element({x:300, y:250, color:"blue", type:"flower"}),new Elem
       
       
       
-      if(username=="LeftClickMage"){
-              document.body.appendChild(kickButton);
+      // if(username=="LeftClickMage"){
+      //         document.body.appendChild(kickButton);
 
-      }
+      // }
       
     
       window.onresize = function(event){
@@ -610,18 +906,35 @@ var flowers = [new Element({x:300, y:250, color:"blue", type:"flower"}),new Elem
           } else if (movement.down && movement.right){
             speedModifier = .7;
           }
-          if (players[username].attacking){
+          if (players[username].attacking && players[username].type=="swordsman"){
             speedModifier += .2;
           }
-          if (players[username].offset>=15 && players[username].offset < 40){
+          if (players[username].offset>=15 && players[username].offset < 40 && players[username].type=="swordsman"){
 speedModifier-=.1;
-          }else if (players[username].offset>2 && players[username].offset < 15){
+          }else if (players[username].offset>2 && players[username].offset < 15 && players[username].type=="swordsman"){
   speedModifier =.6;
 
-} else if (players[username].offset <=2) {
+} else if (players[username].offset <=2 && players[username].type=="swordsman") {
   speedModifier =.2;
 
 }
+if(players[username].atkCooldown > 0 && players[username].type=="sniper"){
+          speedModifier=.6
+}
+if(!players[username].attacking && players[username].type=="sniper"){
+            if(players[username].atkCooldown > 0){
+              players[username].atkCooldown-=1;
+            } else {
+              document.getElementById("atkCooldownBadge").setAttribute("class", "badge bg-success");
+              document.getElementById("atkCooldownBadge").innerHTML = "Ready!";
+              speedModifier += .3
+              
+            }
+          } else if(players[username].attacking && players[username].type=="sniper") {
+            players[username].atkCooldown=150;
+            document.getElementById("atkCooldownBadge").innerHTML = "Reloading..";
+            document.getElementById("atkCooldownBadge").setAttribute("class", "badge bg-secondary");
+          }
           if (movement.right && players[username].rightEdge == false){
           players[username].globalX += 10*speedModifier;
           players[username].velocity.x = 10 * speedModifier;
@@ -641,7 +954,16 @@ speedModifier-=.1;
           players[username].velocity.y = 0 * speedModifier;
         }
         if(movement.atk){
-          players[username].attacking = true;
+          if(players[username].type=="sniper"){
+            if(players[username].atkCooldown == 0){
+              players[username].attacking = true;
+            } else {
+              players[username].attacking = false;
+            }
+          }else {
+            players[username].attacking = true;
+          }
+          
         } else {
           players[username].attacking = false;
         }
@@ -657,6 +979,7 @@ speedModifier-=.1;
         if((players[username].position.y>=980 && movement.down) || (players[username].position.y <=-980 && movement.up)){
           players[username].velocity.y = 0;
         }
+        
 
         players[username].position.x += players[username].velocity.x;
         players[username].position.y += players[username].velocity.y;
@@ -675,10 +998,14 @@ speedModifier-=.1;
           flowers[i].position.y -= players[username].velocity.y;
           flowers[i].create();
         }
+
+        
+
+
         players[username].create();
 
         
-        socket.emit('move', username, [players[username].position.x, players[username].globalX, players[username].offset, players[username].spawncooldown],[players[username].position.y, players[username].globalY], players[username].rotation, players[username].attacking);
+        socket.emit('move', username, [players[username].position.x, players[username].globalX, players[username].offset, players[username].spawncooldown, players[username].type],[players[username].position.y, players[username].globalY], players[username].rotation, players[username].attacking);
 for(let i = 0; i<usernameList.length; i++){
           if(usernameList[i] != username){
         if (players[username].position.x != players[username].prevXRel||players[username].position.y != players[username].prevYRel){
@@ -690,7 +1017,7 @@ for(let i = 0; i<usernameList.length; i++){
 }
 }
 }
-
+if(players[username].type == "swordsman"){
 if (players[username].offset>40){
   document.getElementById('stamBadge').setAttribute("class", "badge bg-success");
 } else if (players[username].offset>15){
@@ -700,7 +1027,13 @@ if (players[username].offset>40){
 } else {
   document.getElementById('stamBadge').setAttribute("class", "badge bg-dark");
 }
-        document.getElementById('stamBadge').innerHTML = players[username].offset*2;
+        }
+if(players[username].type=="swordsman"){
+  document.getElementById('stamBadge').innerHTML = players[username].offset*2;
+} 
+        if(players[username].type =="swordsman"){
+          document.getElementById('stamBadge').innerHTML = players[username].offset*2;
+        }
         for(let i = 0; i<usernameList.length; i++){
 
           
@@ -732,7 +1065,7 @@ if (players[username].offset>40){
             players[usernameList[i]].messageTimer += 1;
           }
           
-          if(players[usernameList[i]].attacking == true){
+          if(players[usernameList[i]].attacking == true ){
             if(players[usernameList[i]].offset> 0){
               players[usernameList[i]].offset -= .5;
             } 
@@ -742,7 +1075,9 @@ if (players[username].offset>40){
               players[usernameList[i]].offset += .5;
             }
           }
-          socket.emit('update', usernameList[i], ["offsetUpdate", players[usernameList[i]].offset]);
+          
+          
+         // socket.emit('update', usernameList[i], ["offsetUpdate", players[usernameList[i]].offset]);
           //2200 , 2700
           if (players[usernameList[i]].disconnectTimer == 2200){
               players[usernameList[i]].afkSymbol = "*";
@@ -778,7 +1113,6 @@ if (players[username].offset>40){
           var distX = players[username].globalX - players[usernameList[i]].globalX;
           var distY = players[username].globalY - players[usernameList[i]].globalY;
           var dist = Math.sqrt(distX*distX + distY*distY);
- console.log(dist);
 
             if(players[username].attacking==true && dist > players[username].offset+45 && dist < players[username].offset+105){
               
@@ -802,7 +1136,11 @@ if (players[username].offset>40){
 
 
 
-
+            players[usernameList[i]].prevXRel = players[usernameList[i]].position.x;
+          players[usernameList[i]].prevYRel = players[usernameList[i]].position.y;
+          players[usernameList[i]].prevX = players[usernameList[i]].globalX;
+          players[usernameList[i]].prevY = players[usernameList[i]].globalY;
+          players[usernameList[i]].prevR = players[usernameList[i]].rotation;
 
 
 
@@ -811,11 +1149,8 @@ if (players[username].offset>40){
             }
           
           }
-           players[usernameList[i]].prevXRel = players[usernameList[i]].position.x;
-          players[usernameList[i]].prevYRel = players[usernameList[i]].position.y;
-          players[usernameList[i]].prevX = players[usernameList[i]].globalX;
-          players[usernameList[i]].prevY = players[usernameList[i]].globalY;
-          players[usernameList[i]].prevR = players[usernameList[i]].rotation;
+           
+          console.log(players[usernameList[i]].position.x);
           
           
           
@@ -856,7 +1191,7 @@ socket.on('move', function(user, valX, valY, valR,atk){
     }
   }
   if (players[user] == undefined){
-    spawnPlayerManual(user);
+    spawnPlayerManual(user, valX[4]);
     
   }
   if (!inGame){
@@ -872,6 +1207,7 @@ socket.on('move', function(user, valX, valY, valR,atk){
     players[user].globalY = valY[1];
     players[user].offset = valX[2];
     players[user].spawncooldown = valX[3];
+    players[user].type = valX[4];
   }
   usernameList = usernameList.filter(function(item, index, inputArray){
     return inputArray.indexOf(item) == index;
@@ -894,9 +1230,9 @@ socket.on('update', function(user, msg){
    }
     
    
- } else if(msg[0] == "offsetUpdate"){
-    players[user].offset = msg[1];
-   }
+  } //else if(msg[0] == "offsetUpdate"){
+//     players[user].offset = msg[1];
+//    }
     else if (msg == "msg<prog>msg</prog>msgpassword:password:msg") {
     players[user].message = "";
     players[user].messageTimer = 0;
@@ -934,19 +1270,19 @@ socket.on('update', function(user, msg){
 });
 socket.on('spawn player', function(user) {
   console.log(spawned);
-  if (!spawned && user != ""){
-    players[user] = new Player({x:0, y:0, color:"yellow", username:user});
+  if (!spawned && user[0] != ""){
+    players[user[0]] = new Player({x:0, y:0, color:"yellow", username:user[0], type:user[1]});
     spawned = true;
   } else {
-    players[user] = new Player({x:0, y:0, color:"yellow", username:user});
+    players[user[0]] = new Player({x:0, y:0, color:"yellow", username:user[0], type:user[1]});
   }
-  usernameList.push(user);
+  usernameList.push(user[0]);
 
 
 });
-function spawnPlayerManual(user) {
+function spawnPlayerManual(user, type) {
   console.log("created");
-  players[user] = new Player({x:0, y:0, color:"yellow", username:user});
+  players[user] = new Player({x:0, y:0, color:"yellow", username:user, type:type});
   usernameList.push(user);
 }
 function checkOverflow(element) {
