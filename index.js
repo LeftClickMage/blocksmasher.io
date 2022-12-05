@@ -83,7 +83,6 @@ io.on('connection', (socket) => {
   console.log('a user connected');
   socket.on('disconnect', () => {
     console.log("disconnected");
-    io.emit('update', user, 'killed');
   });
   socket.on('move', (msg, val, val2, valR, atk) => {
     io.emit('move', msg, val, val2, valR, atk);
