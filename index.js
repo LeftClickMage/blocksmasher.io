@@ -6,11 +6,10 @@ const path = require('path');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
-var name = __dirname;
-// var name = "52.54.56.234:3000";
+
 
 var user;
-app.use(express.static(path.join(name, 'static')));
+app.use(express.static(path.join(__dirname, '/static')));
 // // app.use(express.static(path.join(__dirname, '../')));
 
 
