@@ -1134,10 +1134,10 @@ if(!players[username].attacking && players[username].type=="sniper"){
         }
         
         if((players[username].position.x>=980 && movement.right) || (players[username].position.x <=-980 && movement.left)){
-          players[username].velocity.x = 0;
+          socket.emit('update', players[username], 'killed'); 
         }
         if((players[username].position.y>=980 && movement.down) || (players[username].position.y <=-980 && movement.up)){
-          players[username].velocity.y = 0;
+          socket.emit('update', players[username], 'killed'); 
         }
         
 
