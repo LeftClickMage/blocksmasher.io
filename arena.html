@@ -7,7 +7,7 @@
     <style>
     
 @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@500&display=swap');
-
+/* 
 @font-face {
   font-family: 'Ubuntu';
   font-style: normal;
@@ -19,14 +19,24 @@
        url('/ubuntu-v20-latin-500.woff') format('woff'),
        url('/ubuntu-v20-latin-500.ttf') format('truetype'),
        url('/ubuntu-v20-latin-500.svg#Ubuntu') format('svg');
-}
+} */
 
 @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@500&display=swap');
-      html, body {
+@keyframes rotate{
+  from{
+    width:100px;
+  }
+  to{
+    width:150px;
+  }
+}
+*{
+        font-family:'Ubuntu', sans-serif;
+      }
+      body {
         width:  100%;
         height: 100%;
         margin: 0;
-        font-family:'Ubuntu', sans-serif;
         overflow:hidden;
       }
 
@@ -73,9 +83,12 @@
       #zoomOutButton:hover{
         cursor:pointer;
       }
-      
+      .cursor-pointer:hover{
+        cursor:pointer;
+      }
+    
     </style>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous"> -->
 
     <link rel="stylesheet" href="bootstrap.min.css">
 
@@ -85,30 +98,104 @@
   <body>
  
     <script src = "https://mhsmill.com/loadingPage.js?Version=1.7"></script>
-    <div id = "begin" class="d-flex align-items-center top-0 position-fixed h-100 w-100 bg-dark" style="z-index:1000000000;">
-    <div class="text-center container-fluid">
+    <div id = "begin" class="d-flex align-items-center top-0 position-fixed h-100 w-100" style="z-index:100; background-color:rgba(0,0,0,.5);">
+      <div id="credHolder"class="text-center bg-dark d-flex align-items-center border border-5 border-danger" style="width:400px; height:400px;position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);">
+     
+          
+         <div class="container-fluid text-center">
+          <h1 class="text-white mb-4" id="logText">Login</h1>
+          <input placeholder="Username" id="usernameValue" type="username"> 
+          <br>
+          <br>
+          <input placeholder="Password" id="passwordValue" type="password">
+          <button class="btn btn-success fs-3 text-white mt-4" style="width:200px;" onclick="login()" id="logButton">Login</button>
+
+         </div>
+         </div>
+      <div class="d-flex align-items-center mx-3 my-3" style="position:absolute; right:0; top:0;"><img src="https://i.ibb.co/pPWYF9D/Screenshot-2022-11-13-8-58-50-PM-removebg-preview.png" width="50" class="mx-1"><span id="profileName" class="text-white fs-2">Guest</span></div>
+    <div class="text-center container-fluid ">
+      <h1 class="display-1 text-white">SMASHER</h1>
       <input id = "usernameInput" placeholder="Enter Your Username" maxLength="13" class="text-center">
+
       <br>
-      
+      <div id="loginHolder">
+        <div id = "noAccBox">
+          <button class="btn btn-info px-5 fs-2 my-3 text-white" style="width:300px;" onclick="startcred('login')">Login</button>
+        <br>
+        <button class="btn btn-danger px-5 fs-2" style="width:300px;" onclick="startcred('signup')">Sign Up</button>
+        </div>
+        <div id="logOutBox">
+          <button class="btn btn-secondary px-5 fs-2 my-3" style="width:300px;" onclick="logoutACC()">Logout</button>
+  
+        </div>
+
+      </div>
+
+
+      <p class="bottom-0 position-absolute text-white bg-dark p-1 px-3 ms-2">Players are not shown</p>
     </div>
+
+    <div class="bg-dark p-5 pt-4 border border-5 border-light rounded" style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);"  id="classHolder">
+      <h1 class="text-white text-center mb-4">Pick a class</h1>
+      <div class="mx-3 border border-warning border-5 d-flex align-items-center cursor-pointer" onclick = "rest('swordsman')" style="background-color:#2d0043; width:200px; height:200px; float:left;">
+        <div class="container-fluid text-center">
+          <img src="swordsman.png" width="150px">
+          <p class="bottom-0 position-absolute text-light" style="transform:translate(20%,-30%);">The Swordsman</p>
+        </div>
+      </div>
+      <div class="mx-3 border border-warning border-5 d-flex align-items-center" onclick = "rest('sniper')" style="background-color:#2d0043; width:200px; height:200px; " id="sniperHolder">
+        <div class="container-fluid text-center">
+          <img src="https://www.pngplay.com/wp-content/uploads/8/Padlock-Background-PNG-Image.png" width="150px" id="sniperImg">
+          <p class="bottom-0 position-absolute text-light" style="transform:translate(25%,-30%);"  id="sniperText">Login to Unlock</p>
+        </div>
+      </div>
+    </div>
+    
     </div>
     <canvas id ="canvas"></canvas>
     <button id = "zoomOutButton" onclick = "kick(document.getElementById('chat').value)">Kick</button>
     <input id="chat" placeholder="Press '/' to chat!" maxLength = "30" class="position-fixed my-3 mx-4 border border-5 border-dark">
-    
-      <div class="container-fluid w-100 mt-2 text-center position-fixed" id = "stats">
-        <p class="display-6 fw-bold text-white bg-dark d-inline-block px-5 py-2 border border-5" id = "stamina">Stamina: <span class="badge bg-success" id="stamBadge">50</span></p>
-        <p class="display-6 fw-bold text-white bg-dark d-inline-block px-5 py-2 border border-5" id = "cooldown"><span class="badge bg-secondary" id="atkCooldownBadge">Reloading...</span></p>
 
-      </div>
+   <div id="start">
+    
+    <div class="container-fluid w-100 mt-2 text-center position-fixed" id = "stats">
+      <p class="display-6 fw-bold text-white bg-dark d-inline-block px-5 py-2 border border-5" id = "stamina">Stamina: <span class="badge bg-success" id="stamBadge">50</span></p>
+      <p class="display-6 fw-bold text-white bg-dark d-inline-block px-5 py-2 border border-5" id = "cooldown"><span class="badge bg-secondary" id="atkCooldownBadge">Reloading...</span></p>
+
+    </div>
+   </div>
+   
+      
     
 <script src="/socket.io/socket.io.js"></script>
 
     <script>
+
+
+      var beginDiv = document.getElementById('begin');
+      var classHolder = document.getElementById('classHolder');
+      beginDiv.removeChild(classHolder);
+       animate();
+      var startDiv = document.getElementById('start');
+      
+      document.body.removeChild(startDiv);
       function setCookie(cname, cvalue) {
   document.cookie = cname + "=" + cvalue + ";";
 }
-
+var credHolder = document.getElementById('credHolder');
+beginDiv.removeChild(credHolder);
+function startcred(type){
+  beginDiv.appendChild(credHolder);
+  if(type == "login"){
+    document.getElementById('logText').innerHTML = "Login";
+    document.getElementById('logButton').innerHTML = "Login";
+    document.getElementById('logButton').setAttribute("onclick", "login()");
+  } else if(type == "signup"){
+    document.getElementById('logText').innerHTML = "Sign Up";
+    document.getElementById('logButton').innerHTML = "Sign Up";
+    document.getElementById('logButton').setAttribute("onclick", "signUp()");
+  }
+}
 function getCookie(cname) {
   let name = cname + "=";
   let ca = document.cookie.split(';');
@@ -125,20 +212,47 @@ function getCookie(cname) {
 }
 
       function checkCookie() {
-  let username = getCookie("username");
-  if (username != "") {
-   document.getElementById('usernameInput').value = username;
+  var tusername = getCookie("username");
+  if (tusername != "") {
+   document.getElementById('usernameInput').value = tusername;
   }
 }
+
 checkCookie();
       var spawned = false;
       var started = false;
       var socket = io();
       var players = new Object({});
-      var username;
+      var username="booga";
       var canvas = document.getElementById('canvas');
       var chatInput = document.getElementById('chat');
+      document.body.removeChild(chatInput);
       var kickButton = document.getElementById('zoomOutButton');
+      function rest(type){
+        if(type == "sniper" && playerData.length == 0){
+
+        } else {
+          document.body.appendChild(startDiv);
+        setCookie("username", username);
+fetch('/userpost', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({"user" : username})})
+.then(function(response) {
+      if(response.ok) return response.json();
+      throw new Error('Request failed.');
+    });
+if(type == "swordsman"){
+  document.getElementById("stats").removeChild(document.getElementById("cooldown"));
+} else if(type == "sniper"){
+  document.getElementById("stats").removeChild(document.getElementById("stamina"));
+}
+            
+          document.body.removeChild(document.getElementById('begin'));
+          document.body.appendChild(chatInput);
+          socket.emit('spawn player', [username, type]);
+          beginDiv.removeChild(classHolder);
+        }
+
+        
+          }
       
       document.body.removeChild(kickButton);
       function kick(user){
@@ -152,20 +266,26 @@ checkCookie();
           if(username == ""){
             alert("you need to enter a name");
           } else {
-            var type = prompt("What class? \n-swordsman \n-sniper");
-setCookie("username", username);
-if(type == "swordsman"){
-  document.getElementById("stats").removeChild(document.getElementById("cooldown"));
-} else if(type == "sniper"){
-  document.getElementById("stats").removeChild(document.getElementById("stamina"));
-}
-            started=true;
-          document.body.removeChild(document.getElementById('begin'));
-          socket.emit('spawn player', [username, type]);
-          animate();
-          }
+            
+           
+            if(beginDiv.contains(credHolder)){
+              if(document.getElementById('logText').innerHTML =="Sign Up"){
+                signUp();
+              } else if(document.getElementById('logText').innerHTML =="Login"){
+                login();
+              }
+            } else {
+              beginDiv.appendChild(classHolder);
+            if(playerData.length != 0){
+              document.getElementById('sniperText').innerHTML = "The Sniper";
+              document.getElementById('sniperText').setAttribute("style","transform:translate(55%,-30%);");
+              document.getElementById('sniperHolder').classList.add("cursor-pointer");
+              document.getElementById('sniperImg').setAttribute("src", "sniper.png");
+            }
+            }
           
         }
+      }
         if (event.key == "/"){
           chatInput.focus();
           
@@ -844,6 +964,10 @@ var flowers = [new Element({x:300, y:250, color:"blue", type:"flower"}),new Elem
         widthVal = 2048;
         heightVal = 1152;
       }
+      function bigZoom(){
+        widthVal = 4000;
+        heightVal = 2250;
+      }
       function animate(){
       
     setTimeout(function() {
@@ -861,14 +985,14 @@ var flowers = [new Element({x:300, y:250, color:"blue", type:"flower"}),new Elem
       // }
       
     
-      window.onresize = function(event){
+      
+     
+      if(started){
         if (innerWidth/innerHeight >= .75){
           maxZoomOut();
         }
-      };
-      var prop = innerHeight/innerWidth;
-      canvas.width = widthVal;
-      canvas.height = heightVal;
+        var prop = innerHeight/innerWidth;
+      
       if (innerWidth*9/16 != innerHeight){
         heightVal = widthVal*prop;
 
@@ -884,14 +1008,38 @@ var flowers = [new Element({x:300, y:250, color:"blue", type:"flower"}),new Elem
         widthVal = varWidth;
         heightVal = varHeight;
       }
+      } else {
+        if (innerWidth/innerHeight >= .75){
+          bigZoom();
+        }
+        var prop = innerHeight/innerWidth;
+      
+      if (innerWidth*9/16 != innerHeight){
+        heightVal = widthVal*prop;
+
+      }
+      if (heightVal>2250){
+        var difference = heightVal-2250;
+        var varHeight = heightVal;
+        var varWidth = widthVal;
+        for(let i = difference; i > 0; i--){
+          varHeight -= 1*prop;
+          varWidth -= 1;
+        }
+        widthVal = varWidth;
+        heightVal = varHeight;
+      }
+      }
+      canvas.width = widthVal;
+      canvas.height = heightVal;
 
       if (chatInput.value == "/"){
         chatInput.value = "";
       }
       ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
         requestAnimationFrame(animate);
-        
-        
+        if(started){
+          
           players[username].spawncooldown -= 1;
 
           var speedModifier = 1;
@@ -917,6 +1065,19 @@ speedModifier-=.1;
   speedModifier =.2;
 
 }
+if(players[username].type == "swordsman"){
+if (players[username].offset>40){
+  document.getElementById('stamBadge').setAttribute("class", "badge bg-success");
+} else if (players[username].offset>15){
+  document.getElementById('stamBadge').setAttribute("class", "badge bg-warning");
+} else if (players[username].offset>2){
+  document.getElementById('stamBadge').setAttribute("class", "badge bg-danger");
+} else {
+  document.getElementById('stamBadge').setAttribute("class", "badge bg-dark");
+  
+}
+document.getElementById('stamBadge').innerHTML = players[username].offset*2;
+        }
 if(players[username].atkCooldown > 0 && players[username].type=="sniper"){
           speedModifier=.6
 }
@@ -982,30 +1143,28 @@ if(!players[username].attacking && players[username].type=="sniper"){
 
         players[username].position.x += players[username].velocity.x;
         players[username].position.y += players[username].velocity.y;
+
+
         outside.position.x -= players[username].velocity.x;
         outside.position.y -= players[username].velocity.y;
         outside.create();
         inside.position.x -= players[username].velocity.x;
         inside.position.y -= players[username].velocity.y;
         inside.create();
-        
-
-
         if (spawned){
           for(let i = 0; i<flowers.length; i++){
           flowers[i].position.x -= players[username].velocity.x;
           flowers[i].position.y -= players[username].velocity.y;
           flowers[i].create();
         }
+      }
+      players[username].create();
+      socket.emit('move', username, [players[username].position.x, players[username].globalX, players[username].offset, players[username].spawncooldown, players[username].type],[players[username].position.y, players[username].globalY], players[username].rotation, players[username].attacking);
 
-        
 
+      for(let i = 0; i<usernameList.length; i++){
+    
 
-        players[username].create();
-
-        
-        socket.emit('move', username, [players[username].position.x, players[username].globalX, players[username].offset, players[username].spawncooldown, players[username].type],[players[username].position.y, players[username].globalY], players[username].rotation, players[username].attacking);
-for(let i = 0; i<usernameList.length; i++){
           if(usernameList[i] != username){
         if (players[username].position.x != players[username].prevXRel||players[username].position.y != players[username].prevYRel){
                           if (players[usernameList[i]].position.x == players[usernameList[i]].prevXRel && players[usernameList[i]].position.y == players[usernameList[i]].prevYRel){
@@ -1015,25 +1174,11 @@ for(let i = 0; i<usernameList.length; i++){
 
 }
 }
-}
-if(players[username].type == "swordsman"){
-if (players[username].offset>40){
-  document.getElementById('stamBadge').setAttribute("class", "badge bg-success");
-} else if (players[username].offset>15){
-  document.getElementById('stamBadge').setAttribute("class", "badge bg-warning");
-} else if (players[username].offset>2){
-  document.getElementById('stamBadge').setAttribute("class", "badge bg-danger");
-} else {
-  document.getElementById('stamBadge').setAttribute("class", "badge bg-dark");
-}
-        }
-if(players[username].type=="swordsman"){
-  document.getElementById('stamBadge').innerHTML = players[username].offset*2;
-} 
-        if(players[username].type =="swordsman"){
-          document.getElementById('stamBadge').innerHTML = players[username].offset*2;
-        }
-        for(let i = 0; i<usernameList.length; i++){
+
+
+
+
+       
 
           
           if(players[usernameList[i]].spawncooldown>0){
@@ -1149,21 +1294,36 @@ if(players[username].type=="swordsman"){
           
           }
            
-          console.log(players[usernameList[i]].position.x);
           
           
           
         }
-        }
+    
         
-        for(let i = 0; i<elements.length; i++){
+
+        
+       
+      
+        } else {
+        outside.create();
+        inside.create();
+          for(let i = 0; i<flowers.length; i++){
+          flowers[i].create();
+        
+        }
+      }
+      if(started){
+          for(let i = 0; i<elements.length; i++){
         elements[i].position.x -= players[username].velocity.x;
         elements[i].position.y -= players[username].velocity.y;
         elements[i].create();
         }
+        } else {
+          for(let i = 0; i<elements.length; i++){
+        elements[i].create();
+        }
+      }
 
-
-        
     }, 1000 / fps);
         
         
@@ -1277,6 +1437,10 @@ socket.on('spawn player', function(user) {
   }
   usernameList.push(user[0]);
 
+  if(user[0] == username){
+    started=true;
+  }
+
 
 });
 function spawnPlayerManual(user, type) {
@@ -1294,6 +1458,101 @@ function checkOverflow(element) {
   return isOverflowing;
 }
 
+var playerData = [];
+function signUp(){
+  var usernames = document.getElementById('usernameValue').value;
+  var passwords = document.getElementById('passwordValue').value;
+  if(usernames.trim().length==0 || passwords.trim().length==0 ){
+    alert("You need to type something!")
+  } else {
+    fetch('/login', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({"username" : usernames, "password" : passwords})})
+  .then(function(response) {
+      if(response.ok) return response.json();
+      throw new Error('Request failed.');
+    })
+    .then(function(data) {
+     if(data.length!=0){
+      alert("Username Taken!");
+     } else {
+      loginFetch(usernames, passwords);
+     }
+   
+    })
+    .catch(function(error) {
+      console.log(error);
+    });
+  }
+  
+}
+function loginFetch(username, password){
+  fetch('/login', {method: 'GET'})
+    .then(function(response) {
+      if(response.ok) return response.json();
+      throw new Error('Request failed.');
+    })
+    .then(function(data) {
+      var logged = false;
+      for (let i = 0; i<data.length; i++){
+        if(data[i]["username"]==username&&data[i]["password"]==password){
+          setLoginData(data[i]);
+          logged = true;
+        }
+      }
+      if(!logged){
+        alert("Incorrect Username or Password");
+      }
+    })
+    .catch(function(error) {
+      console.log(error);
+    });
+}
+function login(){
+  var usernamesd = document.getElementById('usernameValue').value;
+  var password = document.getElementById('passwordValue').value;
+  if(usernamesd.trim().length==0 || password.trim().length==0 ){
+    alert("You need to type something!")
+  } else {
+  loginFetch(usernamesd, password);
+  }
+}
+var holder = document.getElementById('loginHolder');
+var logsign = document.getElementById('noAccBox');
+var logout = document.getElementById('logOutBox');
+
+function checkLogIn() {
+  let cookieData = getCookie("player-data");
+  if (cookieData.length !== 0) {
+
+   setLoginData(JSON.parse(cookieData));
+
+  }
+}
+checkLogIn();
+function setLoginData(data){
+  if(beginDiv.contains(credHolder)){
+    beginDiv.removeChild(credHolder);
+  }
+  playerData = data;
+  document.getElementById('profileName').innerHTML = playerData["username"];
+  setCookie("player-data", JSON.stringify(playerData));
+  holder.appendChild(logout);
+        
+        holder.removeChild(logsign);
+}
+console.log(playerData);
+if(playerData.length == 0){
+        holder.removeChild(logout);
+      } else {
+        holder.removeChild(logsign);
+      }
+
+      function logoutACC(){
+        playerData = [];
+        setCookie("player-data", "");
+        document.getElementById('profileName').innerHTML = "Guest";
+        holder.removeChild(logout);
+        holder.appendChild(logsign);
+      }
   </script>
   
   
@@ -1301,3 +1560,4 @@ function checkOverflow(element) {
 
   </body>
 </html>
+
