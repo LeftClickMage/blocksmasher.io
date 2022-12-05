@@ -8,7 +8,7 @@ const { Server } = require("socket.io");
 const io = new Server(server);
 
 var user;
-app.use(express.static(path.join(__dirname, '/')));
+app.use(express.static(path.join(__dirname, '../')));
 // // app.use(express.static(path.join(__dirname, '../')));
 
 
