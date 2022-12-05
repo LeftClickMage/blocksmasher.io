@@ -10,7 +10,7 @@ const io = new Server(server);
 var name = "52.54.56.234:3000";
 
 var user;
-app.use(express.static(path.join(name, 'static')));
+// app.use(express.static(path.join(name, 'static')));
 // // app.use(express.static(path.join(__dirname, '../')));
 
 
