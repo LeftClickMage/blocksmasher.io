@@ -297,14 +297,14 @@ if(type == "swordsman"){
           canvas.focus();
         }
         if(chatInput !== document.activeElement){
-          if (event.key == "d" || event.key == "D"){
+          if (event.key == "d" || event.key == "D" || event.keyCode == "39"){
             movement.right = true;
-        } else if (event.key == "a" || event.key == "A"){
+        } else if (event.key == "a" || event.key == "A" || event.keyCode == "37"){
             movement.left = true;
         }
-        if (event.key == "w" || event.key == "W"){
+        if (event.key == "w" || event.key == "W" || event.keyCode == "38"){
             movement.up = true;
-        } else if (event.key == "s" || event.key == "S"){
+        } else if (event.key == "s" || event.key == "S" || event.keyCode == "40"){
             movement.down = true;
         }
         if(event.key == " "){
@@ -315,14 +315,14 @@ if(type == "swordsman"){
     })
     //.focus()
     window.addEventListener('keyup', event=>{
-        if (event.key == "d" || event.key == "D"){
+        if (event.key == "d" || event.key == "D" || event.keyCode == "39"){
             movement.right = false;
-        } else if (event.key == "a" || event.key == "A"){
+        } else if (event.key == "a" || event.key == "A" || event.keyCode == "37"){
             movement.left = false;
         }
-        if (event.key == "w" || event.key == "W"){
+        if (event.key == "w" || event.key == "W" || event.keyCode == "38"){
             movement.up = false;
-        } else if (event.key == "s" || event.key == "S"){
+        } else if (event.key == "s" || event.key == "S" || event.keyCode == "40"){
             movement.down = false;
         }
         if (event.key == " "){
