@@ -1481,7 +1481,11 @@ function signUp(){
      if(data.length!=0){
       alert("Username Taken!");
      } else {
-      loginFetch(usernames, passwords);
+      var dataCon={
+        "username": usernames,
+        "password": passwords
+      };
+      setLoginData(dataCon);
      }
    
     })
@@ -1492,21 +1496,37 @@ function signUp(){
   
 }
 function loginFetch(username, password){
+  document.getElementById('logButton').setAttribute("onclick", "");
+  fetch('/userpost', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({"user" : username})})
+.then(function(response) {
+      if(response.ok) return response.json();
+      throw new Error('Request failed.');
+    });
+    fetch('/passpost', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({"pass" : password})})
+.then(function(response) {
+      if(response.ok) return response.json();
+      throw new Error('Request failed.');
+    });
   fetch('/login', {method: 'GET'})
     .then(function(response) {
       if(response.ok) return response.json();
       throw new Error('Request failed.');
     })
     .then(function(data) {
-      var logged = false;
-      for (let i = 0; i<data.length; i++){
-        if(data[i]["username"]==username&&data[i]["password"]==password){
-          setLoginData(data[i]);
-          logged = true;
-        }
-      }
-      if(!logged){
-        alert("Incorrect Username or Password");
+      console.log(data);
+      if(data){
+        document.getElementById('logButton').setAttribute("onclick", "login()");
+         var dataCon={
+        "username": username,
+        "password": password
+      };
+      setLoginData(dataCon);
+        
+      } else {
+         
+        alert("Incorrect username or password!");
+        location.reload()
+        
       }
     })
     .catch(function(error) {
@@ -1557,8 +1577,7 @@ if(playerData.length == 0){
         playerData = [];
         setCookie("player-data", "");
         document.getElementById('profileName').innerHTML = "Guest";
-        holder.removeChild(logout);
-        holder.appendChild(logsign);
+        location.reload();
       }
   </script>
   

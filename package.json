@@ -4,6 +4,7 @@
   "description": "Smash other blocks to win!",
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.218.0",
+    "bcrypt": "^5.1.0",
     "body-parser": "^1.20.1",
     "consolidate": "^0.16.0",
     "firebase": "^9.14.0",

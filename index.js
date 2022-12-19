@@ -6,9 +6,12 @@ const path = require('path');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
+const bcrypt = require ('bcrypt');
+const saltRounds = 10;
 
 
 var user;
+var passwordInput;
 // app.use(express.static(path.join(name, 'static')));
 
 
@@ -138,8 +141,14 @@ app.post('/login', (req, res) => {
   
   dbo.collection("data").find(query).toArray(function(err, result) {
     if(result.length == 0){
-      var myobj = { username: req.body.username, password: req.body.password };
-      dbo.collection("data").insertOne(myobj, function(err, res) {});
+      bcrypt.genSalt(saltRounds, function(err, salt) {  
+        bcrypt.hash(req.body.password, salt, function(err, hash) {
+
+          var myobj = { username: req.body.username, password: hash };
+          dbo.collection("data").insertOne(myobj, function(err, res) {});
+        });
+      });
+      
     }
     res.send(result);
 
@@ -147,15 +156,54 @@ app.post('/login', (req, res) => {
     
 });
 app.get('/login', (req, res) => {
+  var logged = false;
+  console.log(logged);
   dbo.collection("data").find({}).toArray(function(err, result) {
     if (err) throw err;
-    res.send(result);
-  });
+    var data = result;
+    
+    for (let i = 0; i<data.length; i++){
+      if(data[i]["username"]==user){
+logged = true;
+      }
+    }
+    for (let i = 0; i<data.length; i++){
+      if(data[i]["username"]==user){
+        console.log(data[i]["password"]);
+        console.log(passwordInput);
+        bcrypt.compare(passwordInput, data[i]["password"], function(err, result) {
+          if (result) {
+            res.send(true);
+            return;
+            } else {
+              res.send(false);
+              return;
+            }
+            
+        });
 
+      }
+      
+    }
+    
+       if(logged == false){
+        res.send(false);
+       }       
+            
+            
+  });
+  
+    
+  
 });
 
 
 
 app.post('/userpost', (req,res) =>{
   user = req.body.user;
+  
+});
+app.post('/passpost', (req,res) =>{
+  passwordInput = req.body.pass;
+  
 });
