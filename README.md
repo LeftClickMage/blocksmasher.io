@@ -35,7 +35,7 @@
 
 -Username: LeftClickMage
 
--Password: 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
+-Password: --
 
 **Taking code from GITHUB and putting it on LightSail:**
 
@@ -47,6 +47,6 @@
 
 -Username: LeftClickMage
 
--Password: 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
+-Password: --
 
 
